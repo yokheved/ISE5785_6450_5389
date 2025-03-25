@@ -3,30 +3,67 @@ package geometries;
 import primitives.Point;
 import primitives.Vector;
 
-public class Plane {
+/**
+ * The {@code Plane} class represents a plane in 3D space.
+ * A plane is defined by either:
+ * <ul>
+ *   <li>A point on the plane and a normal vector</li>
+ *   <li>Three non-collinear points in space</li>
+ * </ul>
+ * The plane is infinite and is mainly used for intersection calculations.
+ *
+ * @author Your Name
+ */
+public class Plane extends Geometry {
+
+    /** A point on the plane */
     private final Point q;
+
+    /** The normalized normal vector to the plane */
     private final Vector normal;
 
+    /**
+     * Constructs a plane using a point and a normal vector.
+     *
+     * @param q      a point on the plane
+     * @param normal the normal vector to the plane (will be normalized)
+     */
     public Plane(Point q, Vector normal) {
         this.q = q;
         this.normal = normal.normalize();
     }
 
-    public Plane(Point p1, Point p2, Point p3 )
-    {
-        this.q =p1;
-        normal = null;
+    /**
+     * Constructs a plane using three non-collinear points.
+     * The normal vector is calculated using the cross-product of vectors
+     * p1→p2 and p1→p3.
+     *
+     * @param p1 first point on the plane
+     * @param p2 second point on the plane
+     * @param p3 third point on the plane
+     * @throws IllegalArgumentException if the points are collinear
+     */
+    public Plane(Point p1, Point p2, Point p3) {
+        this.q = p1;
+
+        // Compute normal as the cross product of two vectors in the plane
+        Vector v1 = p2.subtract(p1);
+        Vector v2 = p3.subtract(p1);
+        this.normal = v1.crossProduct(v2).normalize();
+
+        // Validate that the points are not collinear
+        if (this.normal.equals(Vector.ZERO)) {
+            throw new IllegalArgumentException("The three points must not be collinear.");
+        }
     }
 
-    public Vector getNormal() {
+    /**
+     * Returns the normal vector to the plane.
+     *
+     * @return the normal vector
+     */
+    @Override
+    public Vector getNormal(Point p) {
         return normal;
-
     }
-
-    public Vector getNormal(Point p1) {
-        return normal;
-
-    }
-
-
 }
