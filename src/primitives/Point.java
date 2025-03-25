@@ -6,9 +6,12 @@ public class Point {
     public final static Point ZERO =  new Point(Double3.ZERO);
     protected final Double3 xyz;
     public Point(Double3 xyz) {
+
         this.xyz = xyz;
+
     }
     public Point(double x, double y, double z) {
+
         this.xyz = new Double3(x,y,z);
     }
 
@@ -37,13 +40,16 @@ public class Point {
     }
 
     public Vector subtract(Point other) {
+        if (this.equals(other)){
+            throw new IllegalArgumentException("other point equals self is illegal");
+        }
         return new Vector(xyz.subtract(other.xyz));
     }
 
     public double distanceSquared(Point other) {
-       return Math.pow(this.xyz.d1()-other.xyz.d1(), 2) +
-                Math.pow(this.xyz.d2()-other.xyz.d2(), 2) +
-                Math.pow(this.xyz.d3()-other.xyz.d3(), 2);
+       return (this.xyz.d1()-other.xyz.d1())*(this.xyz.d1()-other.xyz.d1()) +
+               (this.xyz.d2()-other.xyz.d2())*(this.xyz.d2()-other.xyz.d2()) +
+                (this.xyz.d3()-other.xyz.d3())*(this.xyz.d3()-other.xyz.d3());
     }
 
     public double distance(Point other) {

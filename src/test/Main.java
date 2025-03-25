@@ -140,6 +140,7 @@ public final class Main {
       try { // test zero vector
          V1.crossProduct(V2);
          out.println("ERROR: crossProduct() for parallel vectors does not throw an exception");
+
       } catch (Exception e) {}
       Vector vr = V1.crossProduct(V3);
       if (!isZero(vr.length() - V1.length() * V3.length()))
