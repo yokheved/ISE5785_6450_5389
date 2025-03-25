@@ -6,15 +6,18 @@ public class Vector extends Point{
 
     public Vector(Double3 xyz) {
         super(xyz);
-        if( Point.ZERO.equals(this)){
+
+        if( this.equals(Point.ZERO)){
             throw new IllegalArgumentException(" vector zero is illegal");
         }
     }
 
 
+
+
     public Vector(double x, double y, double z){
         super(x,y,z);
-        if(Point.ZERO.equals(this)){
+        if(this.equals(Point.ZERO)){
             throw new IllegalArgumentException(" vector zero is illegal");
         }
     }
