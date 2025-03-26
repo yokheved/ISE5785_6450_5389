@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class Point {
 
-    /** The origin point (0, 0, 0) */
+    /** The origin point (0, 0, 0)) */
     public final static Point ZERO = new Point(Double3.ZERO);
 
     /** The coordinates of the point */
