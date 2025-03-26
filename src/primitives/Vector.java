@@ -8,7 +8,7 @@ import static java.lang.System.out;
  *
  * It extends {@link Point} but ensures that the zero vector is not allowed.
  *
- * @author Your Name
+ * @author @author Yokheved and Chaya
  */
 public class Vector extends Point {
 

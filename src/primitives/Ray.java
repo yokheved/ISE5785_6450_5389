@@ -6,7 +6,7 @@ import java.util.Objects;
  * The {@code Ray} class represents a ray in 3D space.
  * A ray is defined by a starting point (head) and a direction vector.
  *
- * @author Your Name
+ * @author @author Yokheved and Chaya
  */
 public class Ray {
 

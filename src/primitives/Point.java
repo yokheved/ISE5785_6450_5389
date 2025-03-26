@@ -6,7 +6,7 @@ import java.util.Objects;
  * The {@code Point} class represents a point in 3D space.
  * It is defined by a {@link Double3} object which contains the 3D coordinates.
  *
- * @author Your Name
+ * @author Yokheved and Chaya
  */
 public class Point {
 
