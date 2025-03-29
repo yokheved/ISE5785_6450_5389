@@ -22,7 +22,7 @@ public class Vector extends Point {
     public Vector(Double3 xyz) {
         super(xyz);
 
-        if (Point.ZERO.equals(this)) {
+        if (xyz.equals(Double3.ZERO)) {
             throw new IllegalArgumentException("Vector zero is illegal");
         }
     }
@@ -38,7 +38,7 @@ public class Vector extends Point {
      */
     public Vector(double x, double y, double z) {
         super(x, y, z);
-        if (Point.ZERO.equals(this)) {
+        if (xyz.equals(Double3.ZERO)) {
             throw new IllegalArgumentException("Vector zero is illegal");
         }
     }
@@ -88,10 +88,6 @@ public class Vector extends Point {
      * @throws IllegalArgumentException if the vectors are opposite (i.e., one is the negative of the other)
      */
     public Vector add(Vector other) {
-        if (this.equals(other.scale(-1))) {
-            throw new IllegalArgumentException("Other vector equals -self is illegal");
-        }
-
         return new Vector(this.xyz.add(other.xyz));
     }
 
@@ -138,6 +134,6 @@ public class Vector extends Point {
      */
     public Vector normalize() {
         double len = this.length();
-        return new Vector(this.xyz.d1() / len, this.xyz.d2() / len, this.xyz.d3() / len);
+        return new Vector(xyz.reduce(len));
     }
 }

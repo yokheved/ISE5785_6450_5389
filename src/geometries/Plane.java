@@ -51,10 +51,6 @@ public class Plane extends Geometry {
         Vector v2 = p3.subtract(p1);
         this.normal = v1.crossProduct(v2).normalize();
 
-        // Validate that the points are not collinear
-        if (this.normal.equals(Vector.ZERO)) {
-            throw new IllegalArgumentException("The three points must not be collinear.");
-        }
     }
 
     /**
