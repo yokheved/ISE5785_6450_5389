@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SphereTest {
+class PlaneTest {
 
     /**
-     * test method for{@link Sphere#{METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Plane#{METHOD_NAME}(${PARAMETERS})}
      */
     @Test
     void testGetNormal() {

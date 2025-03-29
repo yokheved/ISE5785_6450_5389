@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SphereTest {
+class CylinderTest {
 
     /**
-     * test method for{@link Sphere#{METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Cylinder#{METHOD_NAME}(${PARAMETERS})}
      */
     @Test
     void testGetNormal() {
