@@ -43,7 +43,7 @@ class VectorTest {
     @Test
     void testSubtract() {
         // ============ Equivalence Partitions Tests ==============
-// TC1: vectors that create an obtuse angle
+        // TC1: vectors that create an obtuse angle
         Vector v1 = new Vector(1, 2, 3);
         Point p2 = new Point(-2, -1, 0);
         Vector result1 = v1.subtract(p2);
@@ -219,9 +219,50 @@ class VectorTest {
     @Test
     void testCrossProduct() {
         // ============ Equivalence Partitions Tests ==============
+        // TC1: vectors that create an obtuse angle
+        Vector v1 = new Vector(1, 1, 0);
+        Vector v2 = new Vector(-1, 1, 0);
+        Vector result1 = v1.crossProduct(v2);
+        Vector expected1 = new Vector(0, 0, 2);
+        assertEquals(expected1, result1, "Cross product of vectors with obtuse angle failed");
+
+        // TC2: vectors that create an acute angle
+        Vector v3 = new Vector(1, 0, 0);
+        Vector v4 = new Vector(1, 1, 0);
+        Vector result2 = v3.crossProduct(v4);
+        Vector expected2 = new Vector(0, 0, 1);
+        assertEquals(expected2, result2.normalize().scale(result2.length()),
+                "Cross product of vectors with acute angle failed");
+
 
         // =============== Boundary Values Tests ==================
-        fail("Not yet implemented");
+        // TC3: vectors with same direction and same length
+        Vector v5 = new Vector(1, 2, 3);
+        Vector v6 = new Vector(1, 2, 3);
+        assertThrows(IllegalArgumentException.class, () -> v5.crossProduct(v6),
+                "Cross product of same vectors should throw exception");
+
+
+        //TC4: vectors with same direction
+        Vector v7 = new Vector(1, 2, 3);
+        Vector v8 = new Vector(2, 4, 6);  // פי 2
+        assertThrows(IllegalArgumentException.class, () -> v7.crossProduct(v8),
+                "Cross product of parallel vectors should throw exception");
+
+
+        // TC5: vectors with same length
+        Vector v9 = new Vector(1, 0, 0);
+        Vector v10 = new Vector(0, 1, 0);
+        Vector result5 = v9.crossProduct(v10);
+        Vector expected5 = new Vector(0, 0, 1);  // מאונך לשניהם
+        assertEquals(expected5, result5, "Cross product of same-length perpendicular vectors failed");
+
+        // TC6: vectors with opposite direction
+        Vector v11 = new Vector(1, 2, 3);
+        Vector v12 = new Vector(-1, -2, -3);  // בדיוק בכיוון ההפוך
+        assertThrows(IllegalArgumentException.class,
+                () -> v11.crossProduct(v12),
+                "Cross product of opposite-direction vectors should throw exception");
     }
 
     /**
@@ -230,8 +271,14 @@ class VectorTest {
     @Test
     void testNormalize() {
         // ============ Equivalence Partitions Tests ==============
+        // TC1: all vectors
+        Vector v = new Vector(3, 4, 0); // אורך 5
+        Vector normalized = v.normalize();
+        assertEquals(1.0, normalized.length(), 1e-10, "Normalized vector should have length 1");
+
 
         // =============== Boundary Values Tests ==================
-        fail("Not yet implemented");
+        //none
+
     }
 }
