@@ -38,7 +38,7 @@ class VectorTest {
 
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#subtract(Point)}
      */
     @Test
     void testSubtract() {
@@ -49,7 +49,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#distanceSquared(Point)}
      */
     @Test
     void testDistanceSquared() {
@@ -60,7 +60,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#distance(Point)}
      */
     @Test
     void testDistance() {
@@ -71,7 +71,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#lengthSquared()}
      */
     @Test
     void testLengthSquared() {
@@ -82,7 +82,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#length()}
      */
     @Test
     void testLength() {
@@ -92,19 +92,9 @@ class VectorTest {
         fail("Not yet implemented");
     }
 
-    /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
-     */
-    @Test
-    void testTestAdd() {
-        // ============ Equivalence Partitions Tests ==============
-
-        // =============== Boundary Values Tests ==================
-        fail("Not yet implemented");
-    }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#scale(double)}
      */
     @Test
     void testScale() {
@@ -115,7 +105,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#dotProduct(Vector)}
      */
     @Test
     void testDotProduct() {
@@ -126,7 +116,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#crossProduct(Vector)}
      */
     @Test
     void testCrossProduct() {
@@ -137,7 +127,7 @@ class VectorTest {
     }
 
     /**
-     * test method for{@link Vector#${METHOD_NAME}(${PARAMETERS})}
+     * test method for{@link Vector#normalize()}
      */
     @Test
     void testNormalize() {
