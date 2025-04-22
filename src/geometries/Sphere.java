@@ -29,6 +29,7 @@ public class Sphere extends RadianGeometry {
 
     @Override
     public Vector getNormal(Point p) {
+
         // Compute the normal by subtracting the center from p and normalizing
         return p.subtract(center).normalize();
     }

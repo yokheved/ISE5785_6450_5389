@@ -35,6 +35,15 @@ public class Cylinder extends Tube {
      */
     @Override
     public Vector getNormal(Point p) {
-        return null; // To be implemented
+        //check if point is on one of the bases
+        if(p.equals(axis.getHead()) ||
+                p.subtract(axis.getHead()).dotProduct(axis.getDirection())==0){
+            return axis.getDirection().scale(-1);
+        }
+        if(p.subtract(axis.getHead()).dotProduct(axis.getDirection())==height){
+            return axis.getDirection();
+        }
+        //return like a cylinder
+        return super.getNormal(p);
     }
 }

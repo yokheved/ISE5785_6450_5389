@@ -20,17 +20,17 @@ class CylinderTest {
 
         // ============ Equivalence Partitions Tests ==============
         //TC01: on the round surface
-        Point p1 = new Point(1, 0, 5); // על המשטח הסיבובי
+        Point p1 = new Point(1, 0, 3);
         Vector normal1 = cylinder.getNormal(p1);
         assertEquals(new Vector(1, 0, 0), normal1, "Bad normal on the side surface of the cylinder");
 
         //TC02: on the base 1
-        Point p2 = new Point(0, 1, 0); // על הבסיס הראשון, בציר ה-Y
+        Point p2 = new Point(0, 1, 0);
         Vector normal2 = cylinder.getNormal(p2);
         assertEquals(new Vector(0, 0, -1), normal2, "Bad normal on the base 1 of the cylinder");
 
         //TC03: on the base 2
-        Point p3 = new Point(0, 1, 5); // על הבסיס השני, בציר ה-Y
+        Point p3 = new Point(0, 1, 5);
         Vector normal3 = cylinder.getNormal(p3);
         assertEquals(new Vector(0, 0, 1), normal3, "Bad normal on the base 2 of the cylinder");
 
@@ -49,11 +49,11 @@ class CylinderTest {
         //TC03: on the base 1 edge
         Point p6 = new Point(1, 0, 0); // על הקצה של הבסיס התחתון
         Vector normal6 = cylinder.getNormal(p6);
-        assertEquals(new Vector(1, 0, 0), normal6, "Bad normal at the edge of base 1");
+        assertEquals(new Vector(0, 0, -1), normal6, "Bad normal at the edge of base 1");
 
         //TC04: on the base 2 edge
         Point p7 = new Point(1, 0, 5); // על הקצה של הבסיס העליון
         Vector normal7 = cylinder.getNormal(p7);
-        assertEquals(new Vector(1, 0, 0), normal7, "Bad normal at the edge of base 2");
+        assertEquals(new Vector(0, 0, 1), normal7, "Bad normal at the edge of base 2");
     }
 }

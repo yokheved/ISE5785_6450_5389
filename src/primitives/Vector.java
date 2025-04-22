@@ -43,6 +43,21 @@ public class Vector extends Point {
         }
     }
 
+    /**
+     * Constructs a {@code Vector} with the given 3D coordinates.
+     * Throws an exception if the vector is a zero vector.
+     *
+     * @param p the coordinates of the vector
+     * @throws IllegalArgumentException if the vector is a zero vector
+     */
+    public Vector(Point p) {
+        super(p.xyz);
+
+        if (xyz.equals(Double3.ZERO)) {
+            throw new IllegalArgumentException("Vector zero is illegal");
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -134,6 +149,6 @@ public class Vector extends Point {
      */
     public Vector normalize() {
         double len = this.length();
-        return new Vector(xyz.reduce(len));
+        return this.scale(1 / len);
     }
 }

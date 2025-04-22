@@ -2,7 +2,10 @@ package geometries;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
+
+import java.rmi.server.UID;
 
 /**
  * The {@code Tube} class represents an infinite cylindrical tube in 3D space.
@@ -26,11 +29,18 @@ public class Tube extends RadianGeometry {
         this.axis = axis;
     }
 
-
     @Override
     public Vector getNormal(Point p) {
-        return null; // Intentionally returning null
+        Point p0 = axis.getHead();
+        Vector dir = axis.getDirection();
+
+        Vector p0ToP = p.subtract(p0);
+        double t = dir.dotProduct(p0ToP);
+        if(Util.isZero(t)){
+            return new Vector(p).normalize();
+        }
+        Vector dirToP = dir.scale(t);
+        Point o = p0.add(dirToP);
+        return p.subtract(o).normalize();
     }
-
-
 }

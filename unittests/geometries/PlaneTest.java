@@ -39,7 +39,7 @@ class PlaneTest {
      * test method for{@link Plane#Plane(Point, Point, Point)}
      */
     @Test
-    void testPlane() {
+    void testConstructor() {
         // ============ Equivalence Partitions Tests ==============
         //TC01: all points
         //need to check the normal is orthogonal to two vectors(between the points)
