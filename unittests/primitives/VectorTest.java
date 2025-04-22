@@ -65,7 +65,7 @@ class VectorTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             Vector result = v5.subtract(p6);
-        }, "TC3 failed: expected exception when subtracting a point with same coordinates");
+        },"failure text");
     }
 
     /**
@@ -127,7 +127,7 @@ class VectorTest {
         assertThrows(IllegalArgumentException.class, () -> {
             Vector v2 = new Vector(0, 0, 0);
             v2.lengthSquared();
-        });
+        },"failure text");
     }
 
     /**
@@ -148,7 +148,7 @@ class VectorTest {
         assertThrows(IllegalArgumentException.class, () -> {
             Vector v2 = new Vector(0, 0, 0);
             v2.length();
-        });
+        },"failure text");
     }
 
     /**
@@ -177,7 +177,7 @@ class VectorTest {
         double num6 = 0;
         assertThrows(IllegalArgumentException.class, () -> {
             v5.scale(num6);
-        },"scaling by zer failed");
+        },"failure text");
     }
 
     /**
@@ -238,14 +238,12 @@ class VectorTest {
         // TC11: vectors with same direction and same length
         Vector v5 = new Vector(1, 2, 3);
         Vector v6 = new Vector(1, 2, 3);
-        assertThrows(IllegalArgumentException.class, () -> v5.crossProduct(v6),
-                "Cross product of same vectors should throw exception");
+        assertThrows(IllegalArgumentException.class, () -> v5.crossProduct(v6),"failure text");
 
         //TC12: vectors with same direction
         Vector v7 = new Vector(1, 2, 3);
         Vector v8 = new Vector(2, 4, 6);  // פי 2
-        assertThrows(IllegalArgumentException.class, () -> v7.crossProduct(v8),
-                "Cross product of parallel vectors should throw exception");
+        assertThrows(IllegalArgumentException.class, () -> v7.crossProduct(v8),"failure text");
 
         // TC13: vectors with same length
         Vector v9 = new Vector(1, 0, 0);
@@ -258,8 +256,7 @@ class VectorTest {
         Vector v11 = new Vector(1, 2, 3);
         Vector v12 = new Vector(-1, -2, -3);  // בדיוק בכיוון ההפוך
         assertThrows(IllegalArgumentException.class,
-                () -> v11.crossProduct(v12),
-                "Cross product of opposite-direction vectors should throw exception");
+                () -> v11.crossProduct(v12),"failure text");
     }
 
     /**

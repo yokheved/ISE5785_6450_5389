@@ -62,22 +62,27 @@ class PlaneTest {
 
         //TC11: p1 and p2 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(0, 1, 0)));
+                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(0, 1, 0))
+                ,"failure text");
 
         //TC12: p1 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(0, 1, 0), new Point(1, 1, 1)));
+                new Plane(new Point(1, 1, 1), new Point(0, 1, 0), new Point(1, 1, 1))
+                ,"failure text");
 
         //TC13: p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(0, 1, 0), new Point(1, 1, 1), new Point(1, 1, 1)));
+                new Plane(new Point(0, 1, 0), new Point(1, 1, 1), new Point(1, 1, 1))
+                ,"failure text");
 
         //TC14: p1 p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1)));
+                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1))
+                ,"failure text");
 
         //TC15: all points are on the same line
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2)));
+                new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2))
+                ,"failure text");
     }
 }
