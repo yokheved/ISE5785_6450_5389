@@ -6,6 +6,7 @@ import primitives.Util;
 import primitives.Vector;
 
 import java.rmi.server.UID;
+import java.util.List;
 
 /**
  * The {@code Tube} class represents an infinite cylindrical tube in 3D space.
@@ -42,5 +43,10 @@ public class Tube extends RadianGeometry {
         Vector dirToP = dir.scale(t);
         Point o = p0.add(dirToP);
         return p.subtract(o).normalize();
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 }
