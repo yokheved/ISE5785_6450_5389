@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 /**
  * The {@code Cylinder} class represents a finite cylinder in 3D space, extending {@link Tube}.
  * A cylinder is defined by a central axis (a {@link Ray}), a radius, and a height.
@@ -45,5 +47,10 @@ public class Cylinder extends Tube {
         }
         //return like a cylinder
         return super.getNormal(p);
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 }
