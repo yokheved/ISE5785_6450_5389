@@ -14,7 +14,7 @@ class SphereTest {
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        //TC1: all point sphere
+        //TC01: all point sphere
         Sphere sphere = new Sphere( new Point(0, 0, 0),1.0);
         Point p = new Point(0, 0, 1); // נקודה על פני הכדור בציר Z
         Vector normal = sphere.getNormal(p);

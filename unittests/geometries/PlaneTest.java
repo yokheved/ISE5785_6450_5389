@@ -14,7 +14,7 @@ class PlaneTest {
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        //TC1: all points
+        //TC01: all points
         Plane plane = new Plane(
                 new Point(0, 0, 0),
                 new Point(1, 0, 0),
@@ -41,7 +41,7 @@ class PlaneTest {
     @Test
     void testPlane() {
         // ============ Equivalence Partitions Tests ==============
-        //TC1: all points
+        //TC01: all points
         //need to check the normal is orthogonal to two vectors(between the points)
         //and normal.length() is one
         //(make sure the cross product between two vectors between two points won't be 1
@@ -60,23 +60,23 @@ class PlaneTest {
         // =============== Boundary Values Tests ==================
         //all Boundary Values TCs check for illegal argument exception
 
-        //TC2: p1 and p2 are same
+        //TC11: p1 and p2 are same
         assertThrows(IllegalArgumentException.class, () ->
                 new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(0, 1, 0)));
 
-        //TC3: p1 and p3 are same
+        //TC12: p1 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
                 new Plane(new Point(1, 1, 1), new Point(0, 1, 0), new Point(1, 1, 1)));
 
-        //TC4: p2 and p3 are same
+        //TC13: p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
                 new Plane(new Point(0, 1, 0), new Point(1, 1, 1), new Point(1, 1, 1)));
 
-        //TC5: p1 p2 and p3 are same
+        //TC14: p1 p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
                 new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1)));
 
-        //TC6: all points are on the same line
+        //TC15: all points are on the same line
         assertThrows(IllegalArgumentException.class, () ->
                 new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2)));
     }
