@@ -2,6 +2,7 @@ package geometries;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 import java.util.LinkedList;
@@ -72,9 +73,10 @@ public class Plane extends Geometry {
         double t;
         try {
             t = normal.dotProduct(q.subtract(ray.getHead())) / normal.dotProduct(ray.getDirection());
-            if(t==0) return null;
+
+            if( t < 0 || Util.isZero(t)) return null;
         }catch (Exception e){
-            return null;
+          return null;
         }
         List<Point> returnList = new LinkedList<>();
         returnList.add(ray.getPoint(t)) ;
