@@ -33,7 +33,7 @@ public class Triangle extends Polygon {
     @Override
     public List<Point> findIntersections(Ray ray) {
         try {
-            Point intersectionsPlane = plane.findIntersections(ray).getFirst();
+            Point intersectionPlane = plane.findIntersections(ray).getFirst();
 
             Vector v1 = vertices.get(0).subtract(ray.getHead());
             Vector v2 = vertices.get(1).subtract(ray.getHead());
@@ -43,35 +43,28 @@ public class Triangle extends Polygon {
             Vector n2 = v2.crossProduct(v3).normalize();
             Vector n3 = v3.crossProduct(v1).normalize();
 
-            Vector[] vectors = {v1, v2, v3};
-            Vector[] normals = {n1, n2, n3};
+            double dot1 = intersectionPlane.subtract(ray.getHead()).dotProduct(n1);
+            double dot2 = intersectionPlane.subtract(ray.getHead()).dotProduct(n2);
+            double dot3 = intersectionPlane.subtract(ray.getHead()).dotProduct(n3);
 
-            Double firstSign = null;
-
-            for (Vector v : vectors) {
-                for (Vector n : normals) {
-                    double dot = v.dotProduct(n);
-
-                    if (Util.isZero(dot)) {
-                        return null; // Edge case: exactly on the boundary
-                    }
-
-                    if (firstSign == null) {
-                        firstSign = Math.signum(dot);
-                    } else {
-                        if (Math.signum(dot) != firstSign) {
-                            return null; // Different signs → outside
-                        }
-                    }
-                }
+            if (Util.isZero(dot1) || Util.isZero(dot2) || Util.isZero(dot3)) {
+                return null; // Ray hits exactly on edge or vertex
             }
 
-           List<Point> result = new LinkedList<>();
-            result.add(intersectionsPlane);
+            boolean positive = dot1 > 0;
+
+            if ((dot2 > 0) != positive || (dot3 > 0) != positive) {
+                return null; // Signs not all same → outside
+            }
+
+            List<Point> result = new LinkedList<>();
+            result.add(intersectionPlane);
             return result;
 
-        }catch(NoSuchElementException e){
+        } catch (Exception e) {
             return null;
         }
     }
+
 }
+
