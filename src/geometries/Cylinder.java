@@ -51,6 +51,81 @@ public class Cylinder extends Tube {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        // Create a list to store all valid intersections
+        List<Point> intersections = new java.util.LinkedList<>();
+
+        // Get the base and top points of the cylinder
+        Point basePoint = axis.getHead();
+        Vector axisDir = axis.getDirection();
+        Point topPoint = basePoint.add(axisDir.scale(height));
+
+        // First, check for intersections with the cylindrical surface
+        List<Point> tubeIntersections = super.findIntersections(ray);
+        if (tubeIntersections != null) {
+            // Filter tube intersections to only those within the cylinder height
+            for (Point p : tubeIntersections) {
+                // Calculate projection along axis to determine position
+                Vector v = p.subtract(basePoint);
+                double projection = v.dotProduct(axisDir);
+
+                // Keep points between the bases
+                if (projection >= 0 && projection <= height) {
+                    intersections.add(p);
+                }
+            }
+        }
+
+        // Check for intersection with bottom base (at basePoint)
+        checkCapIntersection(ray, basePoint, axisDir.scale(-1), intersections);
+
+        // Check for intersection with top base (at topPoint)
+        checkCapIntersection(ray, topPoint, axisDir, intersections);
+
+        // Return null if no valid intersections
+        return intersections.isEmpty() ? null : intersections;
+    }
+
+    /**
+     * Helper method to check for intersection with a cylinder cap (base or top)
+     *
+     * @param ray the ray to check for intersection
+     * @param capCenter the center point of the cap
+     * @param capNormal the normal to the cap (pointing outward)
+     * @param intersections list to add any valid intersections to
+     */
+    private void checkCapIntersection(Ray ray, Point capCenter, Vector capNormal, List<Point> intersections) {
+        // Get ray origin and direction
+        Point p0 = ray.getHead();
+        Vector v = ray.getDirection();
+
+        // Calculate the denominator of the intersection formula
+        double denominator = v.dotProduct(capNormal);
+
+        // If ray is parallel to the cap (denominator ≈ 0), no intersection
+        if (primitives.Util.isZero(denominator)) {
+            return;
+        }
+
+        // Calculate parameter t for plane intersection:
+        // t = ((capCenter - p0) · capNormal) / (v · capNormal)
+        Vector u = capCenter.subtract(p0);
+        double t = u.dotProduct(capNormal) / denominator;
+
+        // If t ≤ 0, intersection is behind the ray origin
+        if (t <= 0) {
+            return;
+        }
+
+        // Calculate the intersection point with the plane
+        Point intersectionPoint = p0.add(v.scale(t));
+
+        // Check if the intersection point is within the cap's circle
+        // Measure distance from intersection to the cap center
+        double distanceSquared = intersectionPoint.distanceSquared(capCenter);
+
+        // If distance ≤ radius, the point is within the cap
+        if (distanceSquared <= radius * radius) {
+            intersections.add(intersectionPoint);
+        }
     }
 }
