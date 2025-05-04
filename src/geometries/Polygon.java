@@ -82,6 +82,30 @@ public class Polygon extends Geometry {
 
    @Override
    public List<Point> findIntersections(Ray ray) {
-      return null;
+      List<Point> planeIntersections = plane.findIntersections(ray);
+      if (planeIntersections == null) return null;
+
+      Point p0 = ray.getHead();
+      Vector dir = ray.getDirection();
+      Point p = planeIntersections.get(0);
+
+      Vector v1 = vertices.get(0).subtract(p0);
+      Vector v2 = vertices.get(1).subtract(p0);
+      Vector n = v1.crossProduct(v2).normalize();
+      double sign = alignZero(dir.dotProduct(n));
+      if (isZero(sign)) return null;
+      boolean positive = sign > 0;
+
+      for (int i = 1; i < size; ++i) {
+         v1 = vertices.get(i).subtract(p0);
+         v2 = vertices.get((i + 1) % size).subtract(p0);
+         n = v1.crossProduct(v2).normalize();
+         sign = alignZero(dir.dotProduct(n));
+         if (isZero(sign)) return null;
+         if ((sign > 0) != positive) return null;
+      }
+
+      return List.of(p); // The point is inside the polygon
    }
+
 }

@@ -2,8 +2,10 @@ package geometries;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,6 +41,28 @@ public class Sphere extends RadianGeometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        double d;
+        double tm;
+        try {
+            Vector u = center.subtract(ray.getHead());
+            tm = ray.getDirection().dotProduct(u);
+            d = Math.sqrt(u.lengthSquared()-tm*tm);
+        }catch (IllegalArgumentException e){
+            tm = 0;
+            d = 0;
+        }
+        if( d > radius ||  Util.isZero(radius - d) )
+            return null;
+        double th = Math.sqrt(radius*radius-d*d);
+        double t1 = tm - th;
+        double t2 = tm + th;
+        if((t1 < 0 || Util.isZero(t1)) && (t2 < 0 || Util.isZero(t2)))
+            return null;
+        List<Point> result = new LinkedList<>();
+        if(t1 > 0 && !Util.isZero(t1))
+            result.add(ray.getHead().add(ray.getDirection().scale(t1)));
+        if(t2 > 0 && !Util.isZero(t2))
+            result.add(ray.getHead().add(ray.getDirection().scale(t2)));
+        return result;
     }
 }

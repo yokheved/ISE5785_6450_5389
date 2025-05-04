@@ -73,9 +73,6 @@ public class Point {
      * @throws IllegalArgumentException if the points are identical
      */
     public Vector subtract(Point other) {
-        if (this.equals(other)) {
-            throw new IllegalArgumentException("Other point equals self is illegal");
-        }
         return new Vector(xyz.subtract(other.xyz));
     }
 
