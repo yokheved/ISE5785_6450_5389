@@ -12,6 +12,10 @@ import static java.lang.System.out;
  */
 public class Vector extends Point {
 
+    public final static Vector AXIS_X = new Vector(1,0,0);
+    public final static Vector AXIS_Y = new Vector(0,1,0);
+    public final static Vector AXIS_Z = new Vector(0,0,1);
+
     /**
      * Constructs a {@code Vector} with the given 3D coordinates.
      * Throws an exception if the vector is a zero vector.
