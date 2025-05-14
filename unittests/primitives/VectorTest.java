@@ -223,15 +223,13 @@ class VectorTest {
         Vector v1 = new Vector(1, 1, 0);
         Vector v2 = new Vector(-1, 1, 0);
         Vector result1 = v1.crossProduct(v2);
-        Vector expected1 = new Vector(0, 0, 2);
-        assertEquals(expected1, result1, "Cross product of vectors with obtuse angle failed");
+        assertEquals(new Vector(0, 0, 2), result1, "Cross product of vectors with obtuse angle failed");
 
         // TC02: vectors that create an acute angle
         Vector v3 = new Vector(1, 0, 0);
         Vector v4 = new Vector(1, 1, 0);
         Vector result2 = v3.crossProduct(v4);
-        Vector expected2 = new Vector(0, 0, 1);
-        assertEquals(expected2, result2.normalize().scale(result2.length()),
+        assertEquals(new Vector(0, 0, 1), result2.normalize().scale(result2.length()),
                 "Cross product of vectors with acute angle failed");
 
         // =============== Boundary Values Tests ==================
@@ -249,8 +247,7 @@ class VectorTest {
         Vector v9 = new Vector(1, 0, 0);
         Vector v10 = new Vector(0, 1, 0);
         Vector result5 = v9.crossProduct(v10);
-        Vector expected5 = new Vector(0, 0, 1);  // מאונך לשניהם
-        assertEquals(expected5, result5, "Cross product of same-length perpendicular vectors failed");
+        assertEquals(new Vector(0, 0, 1), result5, "Cross product of same-length perpendicular vectors failed");
 
         // TC14: vectors with opposite direction
         Vector v11 = new Vector(1, 2, 3);
