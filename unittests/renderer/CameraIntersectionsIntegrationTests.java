@@ -67,20 +67,21 @@ public class CameraIntersectionsIntegrationTests {
         List<Point> result5 = VPFindIntersections(camera2, sphere5, VPResolution);
         assertNull(result5, "TC015: " + nullMessage);
 
-        //TC021: plane n = vup
-        Plane plane1 = new Plane(new Point(0, 0, -5), new Vector(0,1,0));
+        //TC021: plane n = vto
+        Plane plane1 = new Plane(new Point(0, 0, -5), new Vector(0,0,-1));
         List<Point> result6 = VPFindIntersections(camera1, plane1, VPResolution);
         assertNotNull(result6, "TC021: " + notNullMessage);
         assertEquals(9, result6.size(), "TC021:  " + sizeRongMessage + 9);
 
-        //TC022: plane n = (0,1,1)
-        Plane plane2 = new Plane(new Point(0, 0, -5), new Vector(0,1,1));
+        //TC022: plane n = (0,-0.1,1)
+        Plane plane2 = new Plane(new Point(0, 0, -10), new Vector(0,-0.1,-1));
         List<Point> result7 = VPFindIntersections(camera1, plane2, VPResolution);
         assertNotNull(result7, "TC022: " + notNullMessage);
         assertEquals(9, result7.size(), "TC022: " + sizeRongMessage + 9);
 
         //TC023: plane n = (0,0.1,1)
-        Plane plane3 = new Plane(new Point(0, 0, -5), new Vector(0,0.1,1));
+        //System.out(camera1.constructRay(3, 3, 2, 1));
+        Plane plane3 = new Plane(new Point(0, 0, -1), new Vector(0,1,1));
         List<Point> result8 = VPFindIntersections(camera1, plane3, VPResolution);
         assertNotNull(result8, "TC023: " + notNullMessage);
         assertEquals(6, result8.size(), "TC023: " + sizeRongMessage + 6);
@@ -93,8 +94,8 @@ public class CameraIntersectionsIntegrationTests {
         assertEquals(1, result9.size(), "TC031: " + sizeRongMessage + 1);
 
         //TC032: size of 2 px
-        Triangle triangle2 = new Triangle(new Point(0, 2, -2),
-                new Point(0.5, -0.5, -2), new Point(-0.5, -0.5, -2));
+        Triangle triangle2 = new Triangle(new Point(0, 1.6, -1.5),
+                new Point(0.6, -0.6, -1.5), new Point(-0.6, -0.6, -1.5));
         List<Point> result10 = VPFindIntersections(camera1, triangle2, VPResolution);
         assertNotNull(result10, "TC032: " + notNullMessage);
         assertEquals(2, result10.size(), "TC032: " + sizeRongMessage + 2);
@@ -109,9 +110,11 @@ public class CameraIntersectionsIntegrationTests {
             for (int j = 0; j < VPResolution; j++) {
                 Ray ray1 = camera.constructRay(VPResolution, VPResolution, i, j);
                 List<Point> resultPixel = intersect.findIntersections(ray1);
-                if(resultPixel != null)
-                    if(result == null)  result = new LinkedList<>();
+                if(resultPixel != null) {
+                    if (result == null)
+                        result = new LinkedList<>();
                     result.addAll(resultPixel);
+                }
             }
         }
         return result;

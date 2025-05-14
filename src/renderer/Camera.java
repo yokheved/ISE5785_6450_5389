@@ -6,6 +6,8 @@ import primitives.Vector;
 
 import java.util.MissingResourceException;
 
+import static primitives.Util.isZero;
+
 public class Camera implements Cloneable {
 
     public static class Builder {
@@ -17,7 +19,7 @@ public class Camera implements Cloneable {
         }
 
         public Builder setDirection(Vector Vto, Vector Vup) {
-            if (Vto.dotProduct(Vup) != 0)
+            if (!isZero(Vto.dotProduct(Vup)))
                 throw new IllegalArgumentException("vector VTo needs to be orthogonal");
             camera.VTo = Vto.normalize();
             camera.VUp = Vup.normalize();
@@ -28,12 +30,14 @@ public class Camera implements Cloneable {
             camera.VTo = pCenter.subtract(camera.p0).normalize();
             camera.VRight = camera.VTo.crossProduct(Vup).normalize();
             camera.VUp = camera.VRight.crossProduct(camera.VTo).normalize();
+            if (!isZero(camera.VTo.dotProduct(camera.VRight)))
+                throw new IllegalArgumentException("vector VTo needs to be orthogonal");
             return this;
         }
 
         public Builder setDirection(Point pCenter) {
 
-            return this.setDirection(pCenter, new Vector(0, 1, 0));
+            return this.setDirection(pCenter, Vector.AXIS_Y);
         }
 
         public Builder setVpSize(double width, double height) {
@@ -67,14 +71,14 @@ public class Camera implements Cloneable {
             if (camera.p0 == null)
                 throw new MissingResourceException(exceptionMessageProblem, exceptionMassageClass, " p0 for location ");
 
-            if (camera.width == (0))
+            if (camera.width == (0d))
                 throw new MissingResourceException(exceptionMessageProblem, exceptionMassageClass, " width for VPSize ");
-            if (camera.height == (0))
+            if (camera.height == (0d))
                 throw new MissingResourceException(exceptionMessageProblem, exceptionMassageClass, " height for VPSize ");
-            if (camera.distance == (0))
+            if (camera.distance == (0d))
                 throw new MissingResourceException(exceptionMessageProblem, exceptionMassageClass, " distance for VP distanc");
             if (camera.VRight == null)
-                camera.VRight = camera.VUp.crossProduct(camera.VTo).normalize();
+                camera.VRight = camera.VTo.crossProduct(camera.VUp).normalize();
 
             camera.pc = camera.p0.add(camera.VTo.scale(camera.distance));
 
@@ -103,17 +107,17 @@ public class Camera implements Cloneable {
     public Ray constructRay(int nX, int nY, int j, int i) {
         double ry = height / nY;
         double rx = width / nX;
-        double yi = ((nY - 1) / 2.0 - i) * ry;
-        double xj = ((nX - 1) / 2.0 - j) * rx;
+        double yi = -(i - (nY - 1) / 2.0) * ry;
+        double xj = (j - (nX - 1) / 2.0) * rx;
 
         // Calculate the point on the view plane
         Point pij = pc;
 
         // Add the horizontal and vertical offsets
-        if (xj != 0) pij = pij.add(VRight.scale(xj));
-        if (yi != 0) pij = pij.add(VUp.scale(yi));
+        if (!isZero(xj)) pij = pij.add(VRight.scale(xj));
+        if (!isZero(yi)) pij = pij.add(VUp.scale(yi));
 
-        Vector vij = pij.subtract(p0);
+        Vector vij = pij.subtract(p0).normalize();
         return new Ray(p0, vij);
     }
 
