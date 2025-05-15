@@ -51,6 +51,8 @@ public class Ray {
     }
 
     public Point getPoint(double t){
+        if(t<0) throw new IllegalArgumentException("t must be positive or zero");
+        if(t==0) return head;
         return getHead().add(getDirection().scale(t));
     }
 }
