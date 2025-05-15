@@ -10,14 +10,10 @@ import java.util.Objects;
  */
 public class Ray {
 
-    /**
-     * The head (origin) of the ray
-     */
+    /** The head (origin) of the ray */
     private Point head;
 
-    /**
-     * The direction of the ray
-     */
+    /** The direction of the ray */
     private Vector direction;
 
     public Ray(Point head, Vector direction) {
@@ -54,7 +50,7 @@ public class Ray {
         return direction;
     }
 
-    public Point getPoint(double t) {
+    public Point getPoint(double t){
         return getHead().add(getDirection().scale(t));
     }
 }
