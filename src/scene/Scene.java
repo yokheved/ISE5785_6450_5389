@@ -6,9 +6,9 @@ import primitives.Color;
 
 public class Scene {
 
-    String name;
-    Color background = new Color(java.awt.Color.BLACK);
-    AmbientLight ambientLight = AmbientLight.NONE;
+    public String name;
+    public Color background = new Color(java.awt.Color.BLACK);
+    public AmbientLight ambientLight = AmbientLight.NONE;
     public Geometries geometries = new Geometries();
 
     public Scene(String name) {

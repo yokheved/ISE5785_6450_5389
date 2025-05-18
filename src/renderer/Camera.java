@@ -12,12 +12,6 @@ import static primitives.Util.isZero;
 
 public class Camera implements Cloneable {
 
-    ImageWriter imageWriter;
-    RayTracerBase rayTracerBase;
-    int nX = 1;
-    int nY = 1;
-
-
     public static class Builder {
         final private Camera camera = new Camera();
 
@@ -122,7 +116,10 @@ public class Camera implements Cloneable {
     double height = 0;
     double distance = 0;
     private Point pc;
-
+    ImageWriter imageWriter;
+    RayTracerBase rayTracerBase;
+    int nX = 1;
+    int nY = 1;
 
     private Camera() {
     }
@@ -149,20 +146,43 @@ public class Camera implements Cloneable {
     }
 
     public Camera renderImage() {
-        throw new UnsupportedOperationException();
-    }
-
-    public Camera printGrid(Color color, int interval) {
+        for (int i = 0; i < nX; i++) {
+            for (int j = 0; j < nY; j++) {
+                castRay(nX, nY, j, i);
+            }
+        }
         return this;
     }
+
+
+    public Camera printGrid(Color color, int interval) {
+        // Draw vertical grid lines
+        for (int x = 0; x < nX; x += interval) {
+            for (int y = 0; y < nY; y++) {
+                imageWriter.writePixel(x, y, color);
+            }
+        }
+
+        // Draw horizontal grid lines
+        for (int y = 0; y < nY; y += interval) {
+            for (int x = 0; x < nX; x++) {
+                imageWriter.writePixel(x, y, color);
+            }
+        }
+
+        return this;
+    }
+
 
     public Camera writeToImage(String imageName) {
         imageWriter.writeToImage(imageName);
         return this;
     }
 
-    private void castRay(int nX, int Ny)
+    private void castRay(int nx, int ny, int column, int row)
     {
-
+        Ray ray = constructRay(nx, ny, column, row);
+        Color color = rayTracerBase.traceRay(ray);
+        imageWriter.writePixel(column, row, color);
     }
 }
