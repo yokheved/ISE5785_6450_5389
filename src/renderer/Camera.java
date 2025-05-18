@@ -1,14 +1,22 @@
 package renderer;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import scene.Scene;
 
 import java.util.MissingResourceException;
 
 import static primitives.Util.isZero;
 
 public class Camera implements Cloneable {
+
+    ImageWriter imageWriter;
+    RayTracerBase rayTracerBase;
+    int nX = 1;
+    int nY = 1;
+
 
     public static class Builder {
         final private Camera camera = new Camera();
@@ -25,6 +33,7 @@ public class Camera implements Cloneable {
             camera.VUp = Vup.normalize();
             return this;
         }
+
 
         public Builder setDirection(Point pCenter, Vector Vup) {
             camera.VTo = pCenter.subtract(camera.p0).normalize();
@@ -55,13 +64,22 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        public Builder setResolution(double nX, double nY) {
+        public Builder setResolution(int nX, int nY) {
+            camera.nX = nX;
+            camera.nY = nY;
             return this;
         }
 
         public Camera build() throws CloneNotSupportedException {
             String exceptionMessageProblem = "renderer data messing";
             String exceptionMassageClass = "Camera";
+
+            if (camera.nX <= 0 || camera.nY <= 0)
+                throw new IllegalArgumentException("nX or nY is positive");
+            camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
+
+            if (camera.rayTracerBase == null)
+                camera.rayTracerBase = new SimpleRayTracer(null);
 
             if (camera.VTo == null)
                 throw new MissingResourceException(exceptionMessageProblem, exceptionMassageClass, " VTo of direction ");
@@ -84,6 +102,15 @@ public class Camera implements Cloneable {
 
             return (Camera) camera.clone();
         }
+
+        public Builder setRayTracer(Scene scene, RayTracerType rayTracerType) {
+            switch (rayTracerType) {
+                case SIMPLE -> camera.rayTracerBase = new SimpleRayTracer(scene);
+                default -> camera.rayTracerBase = null;
+            }
+            return this;
+        }
+
     }
 
 
@@ -121,5 +148,21 @@ public class Camera implements Cloneable {
         return new Ray(p0, vij);
     }
 
+    public Camera renderImage() {
+        throw new UnsupportedOperationException();
+    }
 
+    public Camera printGrid(Color color, int interval) {
+        return this;
+    }
+
+    public Camera writeToImage(String imageName) {
+        imageWriter.writeToImage(imageName);
+        return this;
+    }
+
+    private void castRay(int nX, int Ny)
+    {
+
+    }
 }

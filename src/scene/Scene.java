@@ -1,31 +1,31 @@
-package sence;
+package scene;
 
 import geometries.Geometries;
 import lighting.AmbientLight;
 import primitives.Color;
 
-public class Sence {
+public class Scene {
 
     String name;
     Color background = new Color(java.awt.Color.BLACK);
     AmbientLight ambientLight = AmbientLight.NONE;
-    Geometries geometries = new Geometries();
+    public Geometries geometries = new Geometries();
 
-    public Sence(String name) {
+    public Scene(String name) {
         this.name = name;
     }
 
-    public Sence setBackround(Color background) {
+    public Scene setBackground(Color background) {
         this.background = background;
         return this;
     }
 
-    public Sence setAmbientLight(AmbientLight ambientLight) {
+    public Scene setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
         return this;
     }
 
-    public Sence setGeometries(Geometries geometries) {
+    public Scene setGeometries(Geometries geometries) {
         this.geometries = geometries;
         return this;
     }
