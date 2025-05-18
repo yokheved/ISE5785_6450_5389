@@ -62,7 +62,29 @@ public class Ray {
     }
 
     public Point findClosestPoint(List<Point> points) {
-        return null;
+        // אם הרשימה null או ריקה – מחזירים null
+        if (points == null || points.isEmpty()) {
+            return null;
+        }
+        Point closest = null;
+        double minDist = Double.POSITIVE_INFINITY;  // מתחילים ב∞
+
+        for (Point p : points) {
+            if (p == null) {
+                continue;  // מדלגים אם נתנו null ברשימה
+            }
+            // חשוב: קריאה ל-distanceSquared מנקודת ה-origin של הקרן
+            double dist = p.distanceSquared(this.getHead());
+            // ברגע ש־closest == null או מצאנו מרחק קטן יותר – מעדכנים
+            if (closest == null || dist < minDist) {
+                minDist = dist;
+                closest = p;
+            }
+        }
+        return closest;
     }
+
+
+
 
 }

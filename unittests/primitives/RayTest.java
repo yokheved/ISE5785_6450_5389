@@ -37,36 +37,36 @@ class RayTest {
 
         // ============ Equivalence Partitions Tests ==============
 
-        // TC01: the closest point in the middle of the list
+        //TC01: the closest point in the middle of the list
         List<Point> points1 = List.of(
                 new Point(5, 1, 0),
-                new Point(3, 0, 0),
-                new Point(2, 0.5, 0)// closest
+                new Point(2, 0.5, 0),
+                new Point(3, 0, 0) // קרובה ביותר ל-(0,0,0)
         );
         Point result1 = ray.findClosestPoint(points1);
-        assertEquals(new Point(3, 0, 0), result1, "TC01 failed");
+        assertEquals(new Point(2, 0.5, 0), result1, "TC01 failed");
 
         // =============== Boundary Values Tests ==================
 
-        // TC11: empty list return null
+        //TC11: empty list return null
         List<Point> emptyList = List.of();
         Point result2 = ray.findClosestPoint(emptyList);
         assertNull(result2, "TC11 failed");
 
-        // TC12: the closest point in the beginning of the list
+        //TC12: the closest point in the beginning of the list
         List<Point> points2 = List.of(
-                new Point(1, 0, 0), // closest
+                new Point(1, 0, 0), // קרובה ביותר ל-(0,0,0)
                 new Point(3, 0, 0),
                 new Point(5, 0, 0)
         );
         Point result3 = ray.findClosestPoint(points2);
         assertEquals(new Point(1, 0, 0), result3, "TC12 failed");
 
-        // TC13: the closest point in the end of the list
+        //TC13: the closest point in the end of the list
         List<Point> points3 = List.of(
                 new Point(5, 0, 0),
                 new Point(4, 0, 0),
-                new Point(1, 0, 0) // closest
+                new Point(1, 0, 0) // קרובה ביותר ל-(0,0,0)
         );
         Point result4 = ray.findClosestPoint(points3);
         assertEquals(new Point(1, 0, 0), result4, "TC13 failed");
