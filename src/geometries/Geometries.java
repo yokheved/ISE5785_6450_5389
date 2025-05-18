@@ -12,7 +12,7 @@ import java.util.List;
  * This class allows grouping multiple {@link Intersectable} objects and
  * treating them as a single entity for intersection computations.
  */
-public class Geometries implements Intersectable {
+public class Geometries extends Intersectable {
 
     private final List<Intersectable> geometries = new LinkedList<>();
 
@@ -40,11 +40,17 @@ public class Geometries implements Intersectable {
         this.geometries.addAll(Arrays.asList(geometries));
     }
 
+    /**
+     * Computes the intersections of the given ray with all geometries in the collection.
+     *
+     * @param ray the ray to test for intersections
+     * @return a list of intersection points, or {@code null} if there are no intersections
+     */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> result = null;
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        List<Intersection> result = null;
         for (Intersectable geometry : geometries) {
-            List<Point> gResult = geometry.findIntersections(ray);
+            List<Intersection> gResult = geometry.calculateIntersectionsHelper(ray);
             if (gResult != null) {
                 if (result == null) {
                     result = new LinkedList<>();

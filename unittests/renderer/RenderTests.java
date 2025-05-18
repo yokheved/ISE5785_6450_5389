@@ -58,8 +58,8 @@ public class RenderTests {
     * Produce a scene with basic 3D model - including individual lights of the
     * bodies and render it into a png image with a grid
     */
-   /*@Test
-   public void renderMultiColorTest() {
+   @Test
+   public void renderMultiColorTest() throws CloneNotSupportedException {
       Scene scene = new Scene("Multi color").setAmbientLight(new AmbientLight(new Color(51, 51, 51)));
       scene.geometries //
          .add(// center
@@ -79,9 +79,9 @@ public class RenderTests {
          .setResolution(1000, 1000) //
          .build() //
          .renderImage() //
-         .printGrid(100, new Color(WHITE)) //
+         .printGrid(new Color(WHITE), 100) //
          .writeToImage("color render test");
-   }*/
+   }
 
 //   /** Test for XML based scene - for bonus */
 //   @Test

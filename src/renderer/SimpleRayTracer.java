@@ -1,45 +1,58 @@
 package renderer;
 
 import primitives.Color;
-import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
+import geometries.Intersectable.Intersection;
 
 import java.util.List;
 
 /**
- * A simple ray tracer implementation that returns ambient light at the closest intersection point.
- * This tracer does not compute shading, reflection, or refraction.
+ * A basic ray tracer implementation that computes the color of a ray
+ * based solely on the ambient light and the emission color of the intersected geometry.
+ * <p>
+ * This tracer does not support shading, shadows, reflection, or refraction.
+ * It is useful for initial testing and visualization of geometry and camera setup.
+ * </p>
  */
 public class SimpleRayTracer extends RayTracerBase {
 
     /**
-     * Constructs a simple ray tracer for the given scene.
+     * Constructs a simple ray tracer for a given scene.
      *
-     * @param scene the scene to trace rays in
+     * @param scene the scene in which the rays will be traced
      */
     public SimpleRayTracer(Scene scene) {
         super(scene);
     }
 
+    /**
+     * Traces a given ray through the scene to find its closest intersection.
+     * If an intersection is found, returns the ambient light and emission color at that point.
+     * Otherwise, returns the scene's background color.
+     *
+     * @param ray the ray to trace
+     * @return the computed color for the ray
+     */
     @Override
     public Color traceRay(Ray ray) {
-        List<Point> intersectionPoints = scene.geometries.findIntersections(ray);
-        if(intersectionPoints == null)
+        List<Intersection> intersectionPoints = scene.geometries.calculateIntersections(ray);
+        if (intersectionPoints == null) {
             return scene.background;
-        Point closest = ray.findClosestPoint(intersectionPoints);
+        }
+
+        Intersection closest = ray.findClosestIntersection(intersectionPoints);
         return calcColor(closest);
     }
 
     /**
-     * Calculates the color at the given point.
-     * Currently returns only the ambient light intensity of the scene.
+     * Calculates the color at the given intersection point.
+     * The color is composed of the scene's ambient light and the geometry's emission.
      *
-     * @param point the point to calculate the color at
-     * @return the ambient light color
+     * @param intersection the intersection point with geometry
+     * @return the computed color at the intersection point
      */
-    private Color calcColor(Point point){
-        return scene.ambientLight.getIntensity();
+    private Color calcColor(Intersection intersection) {
+        return scene.ambientLight.getIntensity().add(intersection.geometry.getEmission());
     }
-
 }

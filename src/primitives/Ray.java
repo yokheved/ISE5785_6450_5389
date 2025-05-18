@@ -1,26 +1,35 @@
 package primitives;
 
+import geometries.Intersectable.Intersection;
+
 import java.util.List;
 import java.util.Objects;
 
 /**
  * The {@code Ray} class represents a ray in 3D space.
  * A ray is defined by a starting point (head) and a direction vector.
+ * The direction is always normalized.
+ * <p>
+ * Rays are commonly used in geometric computations such as ray tracing.
+ * </p>
  *
- * @author @author Yokheved and Chaya
+ * @author Yokheved and Chaya
  */
 public class Ray {
 
-    /**
-     * The head (origin) of the ray
-     */
+    /** The origin point of the ray */
     private Point head;
 
-    /**
-     * The direction of the ray
-     */
+    /** The normalized direction vector of the ray */
     private Vector direction;
 
+    /**
+     * Constructs a ray from a given point and direction.
+     * The direction is normalized upon construction.
+     *
+     * @param head the origin point of the ray
+     * @param direction the direction vector (will be normalized)
+     */
     public Ray(Point head, Vector direction) {
         this.head = head;
         this.direction = direction.normalize();
@@ -48,7 +57,7 @@ public class Ray {
     }
 
     /**
-     * Returns the head (origin point) of the ray.
+     * Returns the origin point (head) of the ray.
      *
      * @return the head point of the ray
      */
@@ -57,7 +66,7 @@ public class Ray {
     }
 
     /**
-     * Returns the direction vector of the ray.
+     * Returns the normalized direction vector of the ray.
      *
      * @return the direction vector
      */
@@ -66,9 +75,9 @@ public class Ray {
     }
 
     /**
-     * Calculates a point on the ray at a distance of {@code t} from the head.
+     * Calculates a point along the ray at a distance {@code t} from the origin.
      *
-     * @param t the distance from the ray's origin; must be non-negative
+     * @param t the distance from the origin (must be non-negative)
      * @return the computed point on the ray
      * @throws IllegalArgumentException if {@code t} is negative
      */
@@ -79,34 +88,42 @@ public class Ray {
     }
 
     /**
-     * Finds the point from the list that is closest to the ray's origin.
+     * Finds the closest point to the ray's origin from a list of points.
      *
-     * @param points the list of points to check
-     * @return the closest point to the ray's origin, or {@code null} if the list is {@code null},
-     *         empty, or contains only {@code null} entries
+     * @param points the list of points to search
+     * @return the closest point to the ray's origin,
+     *         or {@code null} if the list is {@code null}, empty, or contains only {@code null} entries
      */
     public Point findClosestPoint(List<Point> points) {
-        // אם הרשימה null או ריקה – מחזירים null
-        if (points == null || points.isEmpty()) {
-            return null;
-        }
-        Point closest = null;
-        double minDist = Double.POSITIVE_INFINITY;  // מתחילים ב∞
+        return points == null || points.isEmpty() ? null
+                : findClosestIntersection(points.stream()
+                .map(p -> new Intersection(null, p))
+                .toList()
+        ).point;
+    }
 
-        for (Point p : points) {
-            if (p == null) {
-                continue;  // מדלגים אם נתנו null ברשימה
-            }
-            // חשוב: קריאה ל-distanceSquared מנקודת ה-origin של הקרן
-            double dist = p.distanceSquared(this.getHead());
-            // ברגע ש־closest == null או מצאנו מרחק קטן יותר – מעדכנים
+    /**
+     * Finds the closest {@link Intersection} point to the ray's origin.
+     *
+     * @param intersections the list of intersection objects to check
+     * @return the closest intersection to the ray's origin,
+     *         or {@code null} if the list is {@code null}, empty, or only contains {@code null} entries
+     */
+    public Intersection findClosestIntersection(List<Intersection> intersections) {
+        if (intersections == null || intersections.isEmpty()) return null;
+
+        Intersection closest = null;
+        double minDist = Double.POSITIVE_INFINITY;
+
+        for (Intersection p : intersections) {
+            if (p == null) continue;
+            double dist = p.point.distanceSquared(this.getHead());
             if (closest == null || dist < minDist) {
                 minDist = dist;
                 closest = p;
             }
         }
+
         return closest;
     }
-
-
 }
