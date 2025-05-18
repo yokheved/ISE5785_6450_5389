@@ -47,20 +47,44 @@ public class Ray {
                 '}';
     }
 
+    /**
+     * Returns the head (origin point) of the ray.
+     *
+     * @return the head point of the ray
+     */
     public Point getHead() {
         return head;
     }
 
+    /**
+     * Returns the direction vector of the ray.
+     *
+     * @return the direction vector
+     */
     public Vector getDirection() {
         return direction;
     }
 
+    /**
+     * Calculates a point on the ray at a distance of {@code t} from the head.
+     *
+     * @param t the distance from the ray's origin; must be non-negative
+     * @return the computed point on the ray
+     * @throws IllegalArgumentException if {@code t} is negative
+     */
     public Point getPoint(double t) {
         if (t < 0) throw new IllegalArgumentException("t must be positive or zero");
         if (t == 0) return head;
         return getHead().add(getDirection().scale(t));
     }
 
+    /**
+     * Finds the point from the list that is closest to the ray's origin.
+     *
+     * @param points the list of points to check
+     * @return the closest point to the ray's origin, or {@code null} if the list is {@code null},
+     *         empty, or contains only {@code null} entries
+     */
     public Point findClosestPoint(List<Point> points) {
         // אם הרשימה null או ריקה – מחזירים null
         if (points == null || points.isEmpty()) {
@@ -83,8 +107,6 @@ public class Ray {
         }
         return closest;
     }
-
-
 
 
 }

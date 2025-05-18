@@ -2,6 +2,8 @@ package renderer;
 
 import static java.awt.Color.*;
 
+import fileParsing.FileParser;
+import fileParsing.JsonParser;
 import org.junit.jupiter.api.Test;
 
 import geometries.*;
@@ -100,22 +102,19 @@ public class RenderTests {
 //         .writeToImage("xml render test");
 //   }
 
-//   /** Test for JSON based scene - for bonus */
-//   @Test
-//   public void basicRenderJson() throws CloneNotSupportedException {
-//      Scene scene = new Scene("Using Json");
-//      // enter XML file name and parse from JSON file into scene object instead of the
-//      // new Scene above,
-//      // Use the code you added in appropriate packages
-//      // ...
-//      // NB: unit tests is not the correct place to put XML parsing code
-//
-//      camera //
-//         .setRayTracer(scene, RayTracerType.SIMPLE) //
-//         .setResolution(1000, 1000) //
-//         .build() //
-//         .renderImage() //
-//         .printGrid(new Color(YELLOW),100) //
-//         .writeToImage("xml render test");
-//   }
+   /** Test for JSON based scene - for bonus */
+   @Test
+   public void basicRenderJson() throws CloneNotSupportedException {
+      Scene scene = new Scene("Using Json");
+      FileParser fileParser = new JsonParser("two color json test.json");
+      scene = fileParser.getScene(scene);
+
+      camera //
+         .setRayTracer(scene, RayTracerType.SIMPLE) //
+         .setResolution(1000, 1000) //
+         .build() //
+         .renderImage() //
+         .printGrid(new Color(YELLOW),100) //
+         .writeToImage("json render test");
+   }
 }
