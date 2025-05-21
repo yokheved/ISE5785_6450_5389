@@ -82,6 +82,35 @@ public class RenderTests {
          .printGrid(new Color(WHITE), 100) //
          .writeToImage("color render test");
    }
+   /**
+    * Produce a scene with basic 3D model - including individual lights of the
+    * bodies and render it into a png image with a grid
+    */
+   @Test
+   public void renderMultiColorTestKa() throws CloneNotSupportedException {
+      Scene scene = new Scene("Multi color").setAmbientLight(new AmbientLight(new Color(WHITE)));
+      scene.geometries //
+              .add(// center
+                      new Sphere(new Point(0, 0, -100), 50)
+                              .setMaterial(new Material().setKa(new Double3(0.4))),
+                      // up left - green
+                      new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)) //
+                              .setMaterial(new Material().setKa(new Double3(0,0.8,0))),
+                      // down left - red
+                      new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100), new Point(-100, -100, -100)) //
+                              .setMaterial(new Material().setKa(new Double3(0.8,0,0))),
+                      // down right - blue
+                      new Triangle(new Point(100, 0, -100), new Point(0, -100, -100), new Point(100, -100, -100)) //
+                              .setMaterial(new Material().setKa(new Double3(0,0,0.8))));
+
+      camera //
+              .setRayTracer(scene, RayTracerType.SIMPLE) //
+              .setResolution(1000, 1000) //
+              .build() //
+              .renderImage() //
+              .printGrid(new Color(WHITE), 100) //
+              .writeToImage("color render test with ka");
+   }
 
 //   /** Test for XML based scene - for bonus */
 //   @Test
@@ -116,5 +145,21 @@ public class RenderTests {
          .renderImage() //
          .printGrid(new Color(YELLOW),100) //
          .writeToImage("json render test");
+   }
+
+   /** Test for JSON based scene - for bonus - with material */
+   @Test
+   public void basicRenderJsonMaterial() throws CloneNotSupportedException {
+      Scene scene = new Scene("Using Json");
+      FileParser fileParser = new JsonParser("two color json test with ka.json");
+      scene = fileParser.getScene(scene);
+
+      camera //
+              .setRayTracer(scene, RayTracerType.SIMPLE) //
+              .setResolution(1000, 1000) //
+              .build() //
+              .renderImage() //
+              .printGrid(new Color(YELLOW),100) //
+              .writeToImage("json render test with material");
    }
 }

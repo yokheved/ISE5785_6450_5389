@@ -28,6 +28,8 @@ public abstract class FileParser {
      */
     public Scene getScene(Scene scene){
         File file = openFile(fileName);
+        if(!validateFile(file))
+            throw new IllegalArgumentException("Invalid JSON file format: " + file.getName());
         String rawData = extractData(file);
         analyzeData(rawData, scene);
         return scene;
@@ -47,7 +49,24 @@ public abstract class FileParser {
      * @param file the file from which to extract data
      * @return the raw data as a string
      */
+
     protected abstract String extractData(File file);
+
+    /**
+     * Validates the JSON file format before parsing.
+     * <p>
+     * This method checks:
+     * <ul>
+     *     <li>That the file exists and is not empty</li>
+     *     <li>That the file has a .<format> extension</li>
+     *     <li>That the content is valid format</li>
+     *     <li>That required fields (like "geometries") are present</li>
+     * </ul>
+     *
+     * @param file the file to validate
+     * @return true if the file is valid and ready for parsing; false otherwise
+     */
+    protected abstract boolean validateFile(File file);
 
     /**
      * Analyzes the raw data and updates the given {@link Scene} object accordingly.
