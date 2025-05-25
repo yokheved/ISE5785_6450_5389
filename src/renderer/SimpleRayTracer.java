@@ -126,7 +126,7 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector V = intersection.rayDirection;
         Vector R = L.subtract(N.scale(2 * L.dotProduct(N))); // Reflected light vector
 
-        double vrDot = Math.max(0, V.dotProduct(R));
+        double vrDot = Math.max(0, V.scale(-1).dotProduct(R));
         double specFactor = Math.pow(vrDot, intersection.material.nSh);
 
         return intersection.material.kS
