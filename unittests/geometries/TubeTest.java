@@ -263,4 +263,18 @@ class TubeTest {
         List<Point> result40 = tube.findIntersections(ray40);
         // Number of intersections depends on specific setup
     }
+
+    @Test
+    void testCalculateIntersectionsHelper_Tube() {
+        Tube tube = new Tube(new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)), 1.0);
+        Ray ray1 = new Ray(new Point(2, 0, 1), new Vector(-1, 0, 0)); // TC01: intersects side
+        assertEquals(2, tube.calculateIntersectionsHelper(ray1, 5).size());
+
+        Ray ray2 = new Ray(new Point(2, 0, 1), new Vector(-1, 0, 0)); // TC02: intersection beyond max
+        assertNull(tube.calculateIntersectionsHelper(ray2, 0.5));
+
+        Ray ray3 = new Ray(new Point(1, 1, 1), new Vector(1, 1, 0)); // TC03: no intersection
+        assertNull(tube.calculateIntersectionsHelper(ray3, 10));
+    }
+
 }

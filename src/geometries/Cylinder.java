@@ -77,8 +77,8 @@ public class Cylinder extends Tube {
             }
         }
 
-        checkCapIntersection(ray, basePoint, axisDir.scale(-1), intersections);
-        checkCapIntersection(ray, topPoint, axisDir, intersections);
+        checkCapIntersection(ray, basePoint, axisDir.scale(-1), intersections, maxDistance);
+        checkCapIntersection(ray, topPoint, axisDir, intersections, maxDistance);
 
         return intersections.isEmpty() ? null : intersections;
     }
@@ -93,7 +93,8 @@ public class Cylinder extends Tube {
      * @param capNormal the normal vector to the cap's plane
      * @param intersections list to collect valid intersection points
      */
-    private void checkCapIntersection(Ray ray, Point capCenter, Vector capNormal, List<Intersection> intersections) {
+    private void checkCapIntersection
+    (Ray ray, Point capCenter, Vector capNormal, List<Intersection> intersections, double maxDistance) {
         // implementation unchanged
         Point p0 = ray.getHead();
         Vector v = ray.getDirection();
@@ -106,7 +107,7 @@ public class Cylinder extends Tube {
         Vector u = capCenter.subtract(p0);
         double t = u.dotProduct(capNormal) / denominator;
 
-        if (t <= 0) {
+        if (t <= 0 || Util.alignZero(t - maxDistance) > 0) {
             return;
         }
 

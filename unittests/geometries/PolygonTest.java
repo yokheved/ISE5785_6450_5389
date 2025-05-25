@@ -161,4 +161,19 @@ class PolygonTest {
       assertNull(polygon.findIntersections(ray13), "Ray hits extension of side - should return null");
    }
 
+
+   @Test
+   void testCalculateIntersectionsHelper_Polygon() {
+      Polygon poly = new Polygon(
+              new Point(0, 0, 5), new Point(2, 0, 5), new Point(2, 2, 5), new Point(0, 2, 5));
+      Ray ray1 = new Ray(new Point(1, 1, 0), new Vector(0, 0, 1)); // TC01: inside polygon
+      assertEquals(1, poly.calculateIntersectionsHelper(ray1, 10).size());
+
+      Ray ray2 = new Ray(new Point(3, 3, 0), new Vector(0, 0, 1)); // TC02: outside
+      assertNull(poly.calculateIntersectionsHelper(ray2, 10));
+
+      Ray ray3 = new Ray(new Point(1, 1, 0), new Vector(0, 0, 1)); // TC03: at maxDistance
+      assertEquals(1, poly.calculateIntersectionsHelper(ray3, 5).size());
+   }
+
 }

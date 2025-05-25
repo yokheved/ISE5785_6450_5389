@@ -123,4 +123,17 @@ class CylinderTest {
         List<Point> result14 = cylinder.findIntersections(ray14);
         assertNull(result14, "Ray tangent to side and hitting upper edge - should return null");
     }
+    @Test
+    void testCalculateIntersectionsHelper_Cylinder() {
+        Cylinder cyl = new Cylinder(5.0, new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)), 1.0);
+        Ray ray1 = new Ray(new Point(2, 0, 2), new Vector(-1, 0, 0)); // TC01: two side intersections
+        assertEquals(2, cyl.calculateIntersectionsHelper(ray1, 5).size());
+
+        Ray ray2 = new Ray(new Point(0, 0, 6), new Vector(0, 0, -1)); // TC02: intersects top base
+        assertEquals(1, cyl.calculateIntersectionsHelper(ray2, 5).size());
+
+        Ray ray3 = new Ray(new Point(0, 0, -1), new Vector(0, 0, -1)); // TC03: no intersection
+        assertNull(cyl.calculateIntersectionsHelper(ray3, 5));
+    }
+
 }

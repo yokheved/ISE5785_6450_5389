@@ -95,4 +95,17 @@ class TriangleTest {
     }
 
 
+    @Test
+    void testCalculateIntersectionsHelper_Triangle() {
+        Triangle tri = new Triangle(new Point(0, 0, 10), new Point(1, 0, 10), new Point(0, 1, 10));
+        Ray ray1 = new Ray(new Point(0.1, 0.1, 0), new Vector(0, 0, 1)); // TC01: intersects inside
+        assertEquals(1, tri.calculateIntersectionsHelper(ray1, 20).size());
+
+        Ray ray2 = new Ray(new Point(1.0/3, 1.0/3, 0), new Vector(0, 0, 1)); // TC02: intersection at maxDistance
+        assertEquals(1, tri.calculateIntersectionsHelper(ray2, 10).size());
+
+        Ray ray3 = new Ray(new Point(2, 2, 0), new Vector(0, 0, 1)); // TC03: no intersection
+        assertNull(tri.calculateIntersectionsHelper(ray3, 20));
+    }
+
 }

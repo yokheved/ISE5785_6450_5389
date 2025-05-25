@@ -65,28 +65,28 @@ class PlaneTest {
 
         //TC11: p1 and p2 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(0, 1, 0))
-                ,"failure text");
+                        new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(0, 1, 0))
+                , "failure text");
 
         //TC12: p1 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(0, 1, 0), new Point(1, 1, 1))
-                ,"failure text");
+                        new Plane(new Point(1, 1, 1), new Point(0, 1, 0), new Point(1, 1, 1))
+                , "failure text");
 
         //TC13: p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(0, 1, 0), new Point(1, 1, 1), new Point(1, 1, 1))
-                ,"failure text");
+                        new Plane(new Point(0, 1, 0), new Point(1, 1, 1), new Point(1, 1, 1))
+                , "failure text");
 
         //TC14: p1 p2 and p3 are same
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1))
-                ,"failure text");
+                        new Plane(new Point(1, 1, 1), new Point(1, 1, 1), new Point(1, 1, 1))
+                , "failure text");
 
         //TC15: all points are on the same line
         assertThrows(IllegalArgumentException.class, () ->
-                new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2))
-                ,"failure text");
+                        new Plane(new Point(0, 0, 0), new Point(1, 1, 1), new Point(2, 2, 2))
+                , "failure text");
     }
 
     /**
@@ -127,4 +127,17 @@ class PlaneTest {
         assertEquals(1, result4.size(), "Should be exactly one intersection point");
         assertEquals(new Point(1, 1, 1), result4.get(0), "Wrong intersection point");
     }
+
+    @Test
+    void testCalculateIntersectionsHelper_Plane() {
+        Plane plane = new Plane(new Point(0, 0, 5), new Vector(0, 0, 1));
+        Ray ray1 = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)); // TC01: intersects at maxDistance
+        assertEquals(1, plane.calculateIntersectionsHelper(ray1, 5).size());
+
+        Ray ray2 = new Ray(new Point(0, 0, 0), new Vector(0, 1, 0)); // TC02: parallel, no intersection
+        assertNull(plane.calculateIntersectionsHelper(ray2, 10));
+
+        Ray ray3 = new Ray(new Point(0, 0, 6), new Vector(0, 0, 1)); // TC03: ray away from plane
+        assertNull(plane.calculateIntersectionsHelper(ray3, 10));
     }
+}

@@ -46,4 +46,22 @@ class GeometriesTest {
         assertEquals(5, geometries.findIntersections(ray4).size(), "TC14 failed");
     }
 
+
+    @Test
+    void testCalculateIntersectionsHelper_Geometries() {
+        Geometries g = new Geometries(
+                new Sphere( new Point(0, 0, 2), 1),
+                new Plane(new Point(0, 0, 4), new Vector(0, 0, 1)));
+        Ray ray = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        var result = g.calculateIntersectionsHelper(ray, 3); // TC01: Only Sphere
+        assertEquals(2, result.size());
+
+        var result2 = g.calculateIntersectionsHelper(ray, 5); // TC02: Both Sphere and Plane
+        assertEquals(3, result2.size());
+
+        Geometries empty = new Geometries(); // TC03: No geometries
+        assertNull(empty.calculateIntersectionsHelper(ray, 10));
+    }
+
+
 }

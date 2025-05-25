@@ -141,6 +141,6 @@ public class Tube extends RadianGeometry {
             result.add(new Intersection( this, p0.add(v.scale(t2))));
         }
 
-        return result;
+        return result.isEmpty() ? null : result;
     }
 }

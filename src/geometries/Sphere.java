@@ -84,6 +84,6 @@ public class Sphere extends RadianGeometry {
             result.add(new Intersection(this, ray.getPoint(t2)));
         }
 
-        return result;
+        return result.isEmpty() ? null : result;
     }
 }

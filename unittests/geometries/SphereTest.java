@@ -147,4 +147,17 @@ class SphereTest {
         assertEquals(1, result8.size(), "Wrong number of points");
     }
 
+
+    @Test
+    void testCalculateIntersectionsHelper_Sphere_excludeRayHead() {
+        Sphere sphere = new Sphere( new Point(0, 0, 1),1);
+        Ray ray = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        // TC: ray head is at center, intersects once at far side (0, 0, 2)
+        var result = sphere.calculateIntersectionsHelper(ray, 5);
+        assertNotNull(result);
+        assertEquals(1, result.size(), "Expected only one intersection beyond ray head");
+        assertTrue(result.get(0).point.equals(new Point(0, 0, 2)));
+    }
+
+
 }
