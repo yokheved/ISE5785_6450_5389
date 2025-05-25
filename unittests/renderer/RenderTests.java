@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import geometries.*;
 import lighting.AmbientLight;
 import primitives.*;
-import renderer.Camera;
 import scene.Scene;
 
 /**
@@ -92,16 +91,19 @@ public class RenderTests {
       scene.geometries //
               .add(// center
                       new Sphere(new Point(0, 0, -100), 50)
-                              .setMaterial(new Material().setKa(new Double3(0.4))),
+                              .setMaterial(new Material().setKA(new Double3(0.4))),
                       // up left - green
-                      new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)) //
-                              .setMaterial(new Material().setKa(new Double3(0,0.8,0))),
+                      new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100),
+                              new Point(-100, 100, -100)) //
+                              .setMaterial(new Material().setKA(new Double3(0,0.8,0))),
                       // down left - red
-                      new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100), new Point(-100, -100, -100)) //
-                              .setMaterial(new Material().setKa(new Double3(0.8,0,0))),
+                      new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100),
+                              new Point(-100, -100, -100)) //
+                              .setMaterial(new Material().setKA(new Double3(0.8,0,0))),
                       // down right - blue
-                      new Triangle(new Point(100, 0, -100), new Point(0, -100, -100), new Point(100, -100, -100)) //
-                              .setMaterial(new Material().setKa(new Double3(0,0,0.8))));
+                      new Triangle(new Point(100, 0, -100), new Point(0, -100, -100),
+                              new Point(100, -100, -100)) //
+                              .setMaterial(new Material().setKA(new Double3(0,0,0.8))));
 
       camera //
               .setRayTracer(scene, RayTracerType.SIMPLE) //

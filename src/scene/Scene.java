@@ -2,36 +2,38 @@ package scene;
 
 import geometries.Geometries;
 import lighting.AmbientLight;
+import lighting.LightSource;
 import primitives.Color;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * Represents a 3D scene containing geometries, background color, and ambient lighting.
- * PSD object
+ * Represents a 3D scene that includes geometric objects, lighting, and background settings.
+ * <p>
+ * A scene aggregates all the components required for rendering, such as background color,
+ * ambient light, geometries, and additional light sources.
  */
 public class Scene {
 
-    /**
-     * The name of the scene.
-     */
+    /** The name of the scene (used for identification or debugging) */
     public String name;
 
-    /**
-     * The background color of the scene.
-     */
+    /** The background color of the scene (default is black) */
     public Color background = new Color(java.awt.Color.BLACK);
 
-    /**
-     * The ambient light of the scene.
-     */
+    /** The ambient light of the scene, illuminating all objects uniformly */
     public AmbientLight ambientLight = AmbientLight.NONE;
 
-    /**
-     * The collection of geometries in the scene.
-     */
+    /** The collection of geometries present in the scene */
     public Geometries geometries = new Geometries();
 
+    /** The list of light sources in the scene */
+    public List<LightSource> lights = new LinkedList<>();
+
     /**
-     * Constructs a scene with the given name.
+     * Constructs a new {@code Scene} with the specified name.
      *
      * @param name the name of the scene
      */
@@ -42,8 +44,8 @@ public class Scene {
     /**
      * Sets the background color of the scene.
      *
-     * @param background the background color
-     * @return this scene for chaining
+     * @param background the desired background color
+     * @return this scene instance (for method chaining)
      */
     public Scene setBackground(Color background) {
         this.background = background;
@@ -53,8 +55,8 @@ public class Scene {
     /**
      * Sets the ambient light of the scene.
      *
-     * @param ambientLight the ambient light
-     * @return this scene for chaining
+     * @param ambientLight the ambient light source
+     * @return this scene instance (for method chaining)
      */
     public Scene setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
@@ -62,13 +64,24 @@ public class Scene {
     }
 
     /**
-     * Sets the geometries of the scene.
+     * Replaces the geometries in the scene with the given collection.
      *
-     * @param geometries the geometries to add
-     * @return this scene for chaining
+     * @param geometries the geometries to set
+     * @return this scene instance (for method chaining)
      */
     public Scene setGeometries(Geometries geometries) {
         this.geometries = geometries;
+        return this;
+    }
+
+    /**
+     * Adds one or more light sources to the scene.
+     *
+     * @param lights the light sources to add
+     * @return this scene instance (for method chaining)
+     */
+    public Scene setLights(LightSource... lights) {
+        this.lights.addAll(Arrays.stream(lights).toList());
         return this;
     }
 }

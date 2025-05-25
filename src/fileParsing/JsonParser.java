@@ -232,7 +232,7 @@ public class JsonParser extends FileParser {
             kaD3 = new Double3(ka.getDouble("d"));
         }
 
-        return new Material().setKa(kaD3);
+        return new Material().setKA(kaD3);
     }
 
     /**

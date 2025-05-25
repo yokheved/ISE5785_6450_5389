@@ -1,7 +1,7 @@
 package renderer;
 
-import primitives.Color;
-import primitives.Ray;
+import lighting.LightSource;
+import primitives.*;
 import scene.Scene;
 import geometries.Intersectable.Intersection;
 
@@ -42,25 +42,106 @@ public class SimpleRayTracer extends RayTracerBase {
         }
 
         Intersection closest = ray.findClosestIntersection(intersectionPoints);
-        return calcColor(closest);
+        Color closestColor = calcColor(closest, ray);
+        return closestColor;
     }
 
     /**
      * Calculates the base color at the given intersection point.
      * <p>
-     * The resulting color is computed as the sum of:
-     * <ul>
-     *     <li>The ambient light intensity of the scene, scaled by the material's ambient reflection coefficient {@code Ka}.</li>
-     *     <li>The emission color of the geometry at the intersection point.</li>
-     * </ul>
-     * This method represents the base (non-directional) contribution to the final color,
-     * and does not yet include effects from direct lighting, shadows, reflections, or refractions.
+     * The color is composed of ambient lighting and local lighting effects
+     * (diffuse and specular), if the geometry is facing the ray.
+     * If the geometry is not lit from the ray direction, black is returned.
      *
-     * @param intersection the intersection point with a geometry in the scene
-     * @return the computed base color at the intersection point
+     * @param intersection the intersection point
+     * @param ray the incoming ray
+     * @return the calculated color
      */
-    private Color calcColor(Intersection intersection) {
-        return scene.ambientLight.getIntensity().scale(intersection.geometry.getMaterial().Ka)
-                .add(intersection.geometry.getEmission());
+    private Color calcColor(Intersection intersection, Ray ray) {
+        boolean lighted = preprocessIntersection(intersection, ray.getDirection());
+        if (!lighted) {
+            return Color.BLACK;
+        }
+        return scene.ambientLight.getIntensity().scale(intersection.geometry.getMaterial().kA)
+                .add(calcColorLocalEffects(intersection));
     }
+    /**
+     * Prepares intersection data required for lighting calculations.
+     * Sets ray direction, geometry normal, and dot product between them.
+     *
+     * @param intersection    the intersection to prepare
+     * @param intersectingRay the direction of the ray that caused the intersection
+     * @return true if the dot product is not zero (surface is visible), false otherwise
+     */
+    public Boolean preprocessIntersection(Intersection intersection, Vector intersectingRay) {
+        intersection.rayDirection = intersectingRay.normalize();
+        intersection.geometryNormal = intersection.geometry.getNormal(intersection.point);
+        intersection.directionDotNormal = Util.alignZero(
+                intersection.rayDirection.dotProduct(intersection.geometryNormal)
+        );
+        return intersection.directionDotNormal != 0;
+    }
+    /**
+     * Sets the light direction and computes its dot product with the normal.
+     * Returns whether the light contributes to the surface (same hemisphere as viewer).
+     *
+     * @param intersection the intersection being evaluated
+     * @param light        the light source being considered
+     * @return true if the light contributes to the shading at this point, false otherwise
+     */
+    public Boolean setLightSource(Intersection intersection, LightSource light) {
+        intersection.lightSource = light;
+        intersection.lightDirection = light.getL(intersection.point);
+        intersection.lightDirectionDotNormal = Util.alignZero(
+                intersection.lightDirection.dotProduct(intersection.geometryNormal)
+        );
+        return intersection.lightDirectionDotNormal * intersection.directionDotNormal > 0;
+    }
+    /**
+     * Computes the local lighting effects (diffuse and specular) at an intersection point.
+     *
+     * @param intersection the intersection with geometry
+     * @return the combined color contribution from all light sources
+     */
+    Color calcColorLocalEffects(Intersection intersection){
+        Color result = intersection.geometry.getEmission();
+        for(LightSource light : scene.lights){
+            boolean isLit = setLightSource(intersection, light);
+            if(! isLit ) continue;
+            result = result.add(intersection.lightSource.getIntensity(intersection.point)
+                    .scale(calcDiffusive(intersection).add(calcSpecular(intersection))));
+        }
+        return result;
+    }
+    /**
+     * Calculates the specular component of the lighting at the intersection.
+     * Based on the Phong reflection model.
+     *
+     * @param intersection the intersection data
+     * @return the specular reflection as a {@link Double3}
+     */
+    Double3 calcSpecular(Intersection intersection) {
+        Vector L = intersection.lightDirection;
+        Vector N = intersection.geometryNormal;
+        Vector V = intersection.rayDirection;
+        Vector R = L.subtract(N.scale(2 * L.dotProduct(N))); // Reflected light vector
+
+        double vrDot = Math.max(0, V.dotProduct(R));
+        double specFactor = Math.pow(vrDot, intersection.material.nSh);
+
+        return intersection.material.kS
+                .scale(specFactor);
+    }
+
+    /**
+     * Calculates the diffuse component of the lighting at the intersection.
+     * Based on Lambert's cosine law.
+     *
+     * @param intersection the intersection data
+     * @return the diffuse reflection as a {@link Double3}
+     */
+    Double3 calcDiffusive(Intersection intersection){
+        return intersection.material.kD.scale(Math.abs(intersection.lightDirectionDotNormal));
+    }
+
 }

@@ -1,34 +1,66 @@
 package geometries;
 
+import lighting.LightSource;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Abstract base class for all geometric objects that can be intersected with rays.
+ * <p>
  * Provides the interface for computing intersections and encapsulates the intersection result.
+ * Subclasses must implement the intersection calculation logic.
  */
 public abstract class Intersectable {
 
     /**
-     * Represents an intersection between a {@link Ray} and a {@link Geometry}.
-     * Contains the point of intersection and the geometry it belongs to.
+     * Represents a detailed intersection between a {@link Ray} and a {@link Geometry}.
+     * <p>
+     * Contains the intersection point, the geometry it intersects, and optional lighting-related information.
      */
     public static class Intersection {
+        /** The geometry object that was intersected */
         public final Geometry geometry;
+
+        /** The point of intersection */
         public final Point point;
 
+        /** The material at the intersection point */
+        public final Material material;
+
+        /** The direction of the intersecting ray (optional) */
+        public Vector rayDirection;
+
+        /** The normal vector of the geometry at the intersection point (optional) */
+        public Vector geometryNormal;
+
+        /** The dot product of the ray direction and the normal (optional) */
+        public double directionDotNormal;
+
+        /** The light source considered at this intersection (optional) */
+        public LightSource lightSource;
+
+        /** The direction from the point to the light source (optional) */
+        public Vector lightDirection;
+
+        /** The dot product of the light direction and the geometry normal (optional) */
+        public double lightDirectionDotNormal;
+
         /**
-         * Constructs a new Intersection object.
+         * Constructs a new {@code Intersection} object with the given geometry and point.
+         * If the geometry is {@code null}, a default material is assigned.
          *
-         * @param geometry the geometry that the ray intersected
-         * @param point the intersection point on the geometry
+         * @param geometry the geometry that was intersected
+         * @param point    the intersection point
          */
         public Intersection(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
+            this.material = geometry == null ? new Material() : geometry.getMaterial();
         }
 
         @Override
@@ -54,30 +86,32 @@ public abstract class Intersectable {
     }
 
     /**
-     * Finds all intersections between a given ray and this geometry.
-     * Returns a list of {@link Intersection} objects that include the intersected geometry.
+     * Calculates all intersections between the specified ray and this geometric object.
+     * <p>
+     * Each intersection contains both the point and the geometry it belongs to.
      *
      * @param ray the ray to intersect with
-     * @return list of intersections, or {@code null} if there are none
+     * @return a list of intersection objects, or {@code null} if there are no intersections
      */
     public final List<Intersection> calculateIntersections(Ray ray) {
         return calculateIntersectionsHelper(ray);
     }
 
     /**
-     * Protected abstract method that subclasses must implement to calculate intersections.
-     * This method is called by {@link #calculateIntersections(Ray)}.
+     * Protected abstract helper method that subclasses must implement to perform the actual intersection computation.
+     * <p>
+     * Called internally by {@link #calculateIntersections(Ray)}.
      *
      * @param ray the ray to intersect with
-     * @return list of intersections including geometry and point, or {@code null} if none
+     * @return a list of intersection results including geometry and point, or {@code null} if there are no intersections
      */
     protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray);
 
     /**
-     * Finds intersection points (without geometry references) between a given ray and this geometry.
+     * Returns only the intersection points (without geometry details) between the given ray and this geometry.
      *
-     * @param ray the ray that intersects with the geometry
-     * @return a list of points where the ray intersects the geometry, or {@code null} if none
+     * @param ray the ray to intersect with
+     * @return a list of intersection points, or {@code null} if there are none
      */
     public final List<Point> findIntersections(Ray ray) {
         var list = calculateIntersections(ray);
