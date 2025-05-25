@@ -49,7 +49,7 @@ public class Sphere extends RadianGeometry {
      * @return a list of intersection points, or {@code null} if there are none
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         Vector u;
         double tm, d;
 
@@ -77,10 +77,10 @@ public class Sphere extends RadianGeometry {
         }
 
         List<Intersection> result = new LinkedList<>();
-        if (t1 > 0 && !Util.isZero(t1)) {
+        if (t1 > 0 && !Util.isZero(t1) && Util.alignZero(t1-maxDistance) <= 0) {
             result.add(new Intersection(this, ray.getPoint(t1)));
         }
-        if (t2 > 0 && !Util.isZero(t2)) {
+        if (t2 > 0 && !Util.isZero(t2) && Util.alignZero(t2-maxDistance) <= 0) {
             result.add(new Intersection(this, ray.getPoint(t2)));
         }
 

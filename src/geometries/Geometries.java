@@ -47,10 +47,10 @@ public class Geometries extends Intersectable {
      * @return a list of intersection points, or {@code null} if there are no intersections
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray , double maxDistance) {
         List<Intersection> result = null;
         for (Intersectable geometry : geometries) {
-            List<Intersection> gResult = geometry.calculateIntersectionsHelper(ray);
+            List<Intersection> gResult = geometry.calculateIntersectionsHelper(ray, maxDistance);
             if (gResult != null) {
                 if (result == null) {
                     result = new LinkedList<>();

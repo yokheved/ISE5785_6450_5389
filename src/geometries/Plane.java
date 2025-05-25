@@ -73,11 +73,11 @@ public class Plane extends Geometry {
      * @return a list containing one intersection if the ray intersects the plane, or {@code null} otherwise
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         double t;
         try {
             t = normal.dotProduct(q.subtract(ray.getHead())) / normal.dotProduct(ray.getDirection());
-            if (t < 0 || Util.isZero(t)) return null;
+            if (t < 0 || Util.isZero(t)|| Util.alignZero(t-maxDistance) > 0) return null;
         } catch (Exception e) {
             return null;
         }

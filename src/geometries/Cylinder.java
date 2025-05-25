@@ -2,6 +2,7 @@ package geometries;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public class Cylinder extends Tube {
      * @return a list of intersection points with the cylinder, or {@code null} if there are none
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         // implementation unchanged
         List<Intersection> intersections = new java.util.LinkedList<>();
 
@@ -63,13 +64,14 @@ public class Cylinder extends Tube {
         Vector axisDir = axis.getDirection();
         Point topPoint = basePoint.add(axisDir.scale(height));
 
-        List<Intersection> tubeIntersections = super.calculateIntersectionsHelper(ray);
+        List<Intersection> tubeIntersections = super.calculateIntersectionsHelper(ray, maxDistance);
         if (tubeIntersections != null) {
             for (Intersection p : tubeIntersections) {
                 Vector v = p.point.subtract(basePoint);
                 double projection = v.dotProduct(axisDir);
 
-                if (projection >= 0 && projection <= height) {
+                if (projection >= 0 && projection <= height
+                        && Util.alignZero(p.point.distance(basePoint)-maxDistance) <= 0) {
                     intersections.add(p);
                 }
             }

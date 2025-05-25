@@ -84,7 +84,7 @@ public class Polygon extends Geometry {
     * @return a list containing a single intersection point if it lies inside the polygon, or {@code null} if not
     */
    @Override
-   public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+   public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
       List<Point> planeIntersections = plane.findIntersections(ray);
       if (planeIntersections == null) return null;
 

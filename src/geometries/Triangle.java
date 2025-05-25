@@ -25,12 +25,14 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
-        List<Point> intersections = plane.findIntersections(ray);
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
+        List<Intersection> intersections = plane.calculateIntersectionsHelper(ray, maxDistance);
         if (intersections == null) return null;
 
         Point p0 = ray.getHead();
-        Point p = intersections.get(0);
+        Point p = intersections.get(0).point;
+        double distance = p.distance(p0);
+        if(distance > maxDistance) return null;
 
         Vector v1 = vertices.get(0).subtract(p0);
         Vector v2 = vertices.get(1).subtract(p0);

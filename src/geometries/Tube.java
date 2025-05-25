@@ -63,7 +63,7 @@ public class Tube extends RadianGeometry {
      * @return list of intersection points with the tube, or {@code null} if none exist
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         Point p0 = ray.getHead();
         Vector v = ray.getDirection();
         Point pa = axis.getHead();
@@ -133,11 +133,11 @@ public class Tube extends RadianGeometry {
 
         List<Intersection> result = new LinkedList<>();
 
-        if (t1 > 0) {
+        if (t1 > 0 && Util.alignZero(t1-maxDistance) <= 0) {
             result.add(new Intersection( this, p0.add(v.scale(t1))));
         }
 
-        if (t2 > 0) {
+        if (t2 > 0 && Util.alignZero(t2-maxDistance) <= 0) {
             result.add(new Intersection( this, p0.add(v.scale(t2))));
         }
 

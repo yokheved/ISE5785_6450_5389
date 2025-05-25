@@ -8,6 +8,8 @@ import primitives.Vector;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Abstract base class for all geometric objects that can be intersected with rays.
@@ -94,7 +96,11 @@ public abstract class Intersectable {
      * @return a list of intersection objects, or {@code null} if there are no intersections
      */
     public final List<Intersection> calculateIntersections(Ray ray) {
-        return calculateIntersectionsHelper(ray);
+        return calculateIntersections(ray, Double.POSITIVE_INFINITY);
+    }
+
+    public final List<Intersection> calculateIntersections(Ray ray, double maxDistance) {
+        return calculateIntersectionsHelper(ray, maxDistance);
     }
 
     /**
@@ -105,7 +111,7 @@ public abstract class Intersectable {
      * @param ray the ray to intersect with
      * @return a list of intersection results including geometry and point, or {@code null} if there are no intersections
      */
-    protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray);
+    protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance);
 
     /**
      * Returns only the intersection points (without geometry details) between the given ray and this geometry.

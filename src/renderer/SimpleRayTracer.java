@@ -16,6 +16,7 @@ import java.util.List;
  * </p>
  */
 public class SimpleRayTracer extends RayTracerBase {
+    private static final double DELTA = 0.1;
 
     /**
      * Constructs a simple ray tracer for a given scene.
@@ -107,7 +108,7 @@ public class SimpleRayTracer extends RayTracerBase {
         Color result = intersection.geometry.getEmission();
         for(LightSource light : scene.lights){
             boolean isLit = setLightSource(intersection, light);
-            if(! isLit ) continue;
+            if(! isLit || !unshaded(intersection) ) continue;
             result = result.add(intersection.lightSource.getIntensity(intersection.point)
                     .scale(calcDiffusive(intersection).add(calcSpecular(intersection))));
         }
@@ -144,4 +145,19 @@ public class SimpleRayTracer extends RayTracerBase {
         return intersection.material.kD.scale(Math.abs(intersection.lightDirectionDotNormal));
     }
 
+    /**
+     * Calculates if the intersection is shaded or not
+     *
+     * @param intersection the intersection data
+     * @return true if the intersection does not have anything shading it
+     */
+    private boolean unshaded(Intersection intersection){
+        Vector L = intersection.lightDirection.scale(-1);
+        double epsSign = intersection.lightDirectionDotNormal < 0 ? 1 : -1;
+        Vector eps = intersection.geometryNormal.scale(DELTA * epsSign);
+        Ray ray = new Ray(intersection.point.add(eps), L);
+        List<Intersection> intersections = scene.geometries
+                .calculateIntersections(ray, intersection.lightSource.getDistance(intersection.point));
+        return intersections == null;
+    }
 }
