@@ -16,6 +16,7 @@ import java.util.Objects;
  * @author Yokheved and Chaya
  */
 public class Ray {
+    private static final double DELTA = 0.1;
 
     /** The origin point of the ray */
     private Point head;
@@ -32,6 +33,23 @@ public class Ray {
      */
     public Ray(Point head, Vector direction) {
         this.head = head;
+        this.direction = direction.normalize();
+    }
+
+    /**
+     * Constructs a ray from a given point and direction,
+     * moving the head delta in the direction of the normal.
+     * The direction is normalized upon construction.
+     *
+     * @param head the origin point of the ray
+     * @param direction the direction vector (will be normalized)
+     * @param normal the normal in which direction to move the ray
+     */
+    public Ray(Point head, Vector direction, Vector normal){
+        double dot = Util.alignZero(direction.dotProduct(normal));
+        int deltaSign = dot < 0 ? 1 : -1;
+        Vector eps = normal.scale(DELTA * deltaSign);
+        this.head = Util.isZero(dot) ? head : head.add(eps);
         this.direction = direction.normalize();
     }
 

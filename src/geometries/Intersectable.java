@@ -8,8 +8,6 @@ import primitives.Vector;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Abstract base class for all geometric objects that can be intersected with rays.
@@ -90,15 +88,23 @@ public abstract class Intersectable {
     /**
      * Calculates all intersections between the specified ray and this geometric object.
      * <p>
-     * Each intersection contains both the point and the geometry it belongs to.
+     * Each intersection includes the intersected geometry and the intersection point.
      *
      * @param ray the ray to intersect with
-     * @return a list of intersection objects, or {@code null} if there are no intersections
+     * @return a list of intersection objects, or {@code null} if no intersections are found
      */
     public final List<Intersection> calculateIntersections(Ray ray) {
         return calculateIntersections(ray, Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * Calculates all intersections between the specified ray and this geometry,
+     * limiting the results to those within the given maximum distance.
+     *
+     * @param ray         the ray to intersect with
+     * @param maxDistance the maximum allowed distance from the ray origin to an intersection point
+     * @return a list of intersection objects, or {@code null} if no intersections are found
+     */
     public final List<Intersection> calculateIntersections(Ray ray, double maxDistance) {
         return calculateIntersectionsHelper(ray, maxDistance);
     }
@@ -106,18 +112,19 @@ public abstract class Intersectable {
     /**
      * Protected abstract helper method that subclasses must implement to perform the actual intersection computation.
      * <p>
-     * Called internally by {@link #calculateIntersections(Ray)}.
+     * Called internally by {@link #calculateIntersections(Ray)} and {@link #calculateIntersections(Ray, double)}.
      *
-     * @param ray the ray to intersect with
-     * @return a list of intersection results including geometry and point, or {@code null} if there are no intersections
+     * @param ray         the ray to intersect with
+     * @param maxDistance the maximum allowed distance from the ray origin to an intersection point
+     * @return a list of intersection results including geometry and point, or {@code null} if none are found
      */
     protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance);
 
     /**
-     * Returns only the intersection points (without geometry details) between the given ray and this geometry.
+     * Returns only the intersection points (without geometry information) between the given ray and this geometry.
      *
      * @param ray the ray to intersect with
-     * @return a list of intersection points, or {@code null} if there are none
+     * @return a list of intersection points, or {@code null} if no intersections are found
      */
     public final List<Point> findIntersections(Ray ray) {
         var list = calculateIntersections(ray);
