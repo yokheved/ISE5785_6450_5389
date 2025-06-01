@@ -46,10 +46,10 @@ public class Ray {
      * @param normal the normal in which direction to move the ray
      */
     public Ray(Point head, Vector direction, Vector normal){
-        double dot = Util.alignZero(direction.dotProduct(normal));
-        int deltaSign = dot < 0 ? 1 : -1;
-        Vector eps = normal.scale(DELTA * deltaSign);
-        this.head = Util.isZero(dot) ? head : head.add(eps);
+        double epsSign =
+                Util.alignZero(direction.dotProduct(normal) * -1) < 0 ? 1 : -1;
+        Vector eps = normal.scale(DELTA * epsSign);
+        this.head = head.add(eps);
         this.direction = direction.normalize();
     }
 

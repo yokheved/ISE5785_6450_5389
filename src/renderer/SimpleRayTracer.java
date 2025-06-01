@@ -200,7 +200,7 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector L = intersection.lightDirection.scale(-1);
         double epsSign = intersection.lightDirectionDotNormal < 0 ? 1 : -1;
         Vector eps = intersection.geometryNormal.scale(DELTA * epsSign);
-        Ray ray = new Ray(intersection.point.add(eps), L);
+        Ray ray = new Ray(intersection.point, L, intersection.geometryNormal);
         List<Intersection> intersections = scene.geometries
                 .calculateIntersections(ray, intersection.lightSource.getDistance(intersection.point));
         if (intersections == null) return true;
@@ -218,9 +218,7 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector V = intersection.rayDirection;
         Vector N = intersection.geometryNormal;
         Vector R = V.subtract(N.scale(2 * V.dotProduct(N)));
-        double epsSign = intersection.directionDotNormal < 0 ? 1 : -1;
-        Vector eps = intersection.geometryNormal.scale(DELTA * epsSign);
-        return new Ray(intersection.point.add(eps), R);
+        return new Ray(intersection.point, R, N);
     }
 
     /**
@@ -231,9 +229,7 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Ray constructRefractedRay(Intersection intersection) {
         Vector L = intersection.rayDirection;
-        double epsSign = intersection.directionDotNormal < 0 ? -1 : 1;
-        Vector eps = intersection.geometryNormal.scale(DELTA * epsSign);
-        return new Ray(intersection.point.add(eps), L);
+        return new Ray(intersection.point, L, intersection.geometryNormal);
     }
 
     /**
