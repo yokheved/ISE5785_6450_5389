@@ -111,6 +111,16 @@ public class Color {
       return new Color(rgb.reduce(k));
    }
 
+   /**
+    * Returns the RGB color components of this color as a {@link Double3}.
+    *
+    * @return the RGB components
+    */
+   public Double3 getRgb() {
+      return rgb;
+   }
+
+
    @Override
    public String toString() { return "rgb:" + rgb; }
 }

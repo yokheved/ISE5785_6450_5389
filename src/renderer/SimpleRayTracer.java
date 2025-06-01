@@ -73,7 +73,7 @@ public class SimpleRayTracer extends RayTracerBase {
         if (!lighted) {
             return Color.BLACK;
         }
-        Color color = calcColorLocalEffects(intersection);
+        Color color = calcColorLocalEffects(intersection, k);
         return level == 1 ? color
                 : color.add(calcGlobalEffects(intersection, level, k));
     }
@@ -118,13 +118,19 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param intersection the intersection point
      * @return the combined color from all visible light sources
      */
-    Color calcColorLocalEffects(Intersection intersection) {
+    Color calcColorLocalEffects(Intersection intersection, Double3 k) {
         Color result = intersection.geometry.getEmission();
         for (LightSource light : scene.lights) {
             boolean isLit = setLightSource(intersection, light);
-            if (!isLit || !unshaded(intersection)) continue;
-            result = result.add(intersection.lightSource.getIntensity(intersection.point)
-                    .scale(calcDiffusive(intersection).add(calcSpecular(intersection))));
+            if (isLit /*&& unshaded(intersection)*/) {
+                Double3 ktr = transparency(intersection);
+                if (!ktr.product(k).lowerThan(MIN_CALC_COLOR_K)) {
+                    Color il = intersection.lightSource.getIntensity(intersection.point).scale(ktr);
+                    result = result.add(il.scale(
+                            calcDiffusive(intersection).add(calcSpecular(intersection))
+                    ));
+                }
+            }
         }
         return result;
     }
@@ -206,6 +212,39 @@ public class SimpleRayTracer extends RayTracerBase {
         if (intersections == null) return true;
         intersections.removeIf(i -> !i.material.kT.lowerThan(MIN_CALC_COLOR_K));
         return intersections.isEmpty();
+    }
+
+    /**
+     * Calculates the transparency factor (ktr) at a given intersection point.
+     * <p>
+     * This method casts a shadow ray from the intersection point toward the light source
+     * and checks for other geometries that may partially block the light. The transparency
+     * factor is computed by multiplying the transparency coefficients (kT) of all obstructing
+     * geometries along the ray path that are closer to the light source than the original intersection.
+     * If the accumulated transparency falls below a minimum threshold, full blockage (black) is returned.
+     *
+     * @param intersection the intersection point for which to calculate transparency
+     * @return the accumulated transparency factor as a {@link Double3}, or {@link Color#BLACK}.getRgb() if blocked
+     */
+    private Double3 transparency(Intersection intersection) {
+        Double3 ktr = Double3.ONE;
+        Vector L = intersection.lightDirection.scale(-1);
+        double lightDistance = intersection.lightSource.getDistance(intersection.point);
+        Ray ray = new Ray(intersection.point, L, intersection.geometryNormal);
+        List<Intersection> intersections = scene.geometries
+                .calculateIntersections(ray, lightDistance);
+        if (intersections == null)
+            return Double3.ONE;
+        for (Intersection i : intersections) {
+            double pointDistanceI = intersection.point.distance(i.point);
+            if (pointDistanceI < lightDistance) {
+                ktr = ktr.product(i.material.kT);
+                if (ktr.lowerThan(MIN_CALC_COLOR_K)) {
+                    return Color.BLACK.getRgb();
+                }
+            }
+        }
+        return ktr;
     }
 
     /**
