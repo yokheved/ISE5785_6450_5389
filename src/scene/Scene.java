@@ -1,9 +1,15 @@
 package scene;
 
 import geometries.Geometries;
+import geometries.Intersectable;
+import geometries.Tube;
 import lighting.AmbientLight;
 import lighting.LightSource;
 import primitives.Color;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
+import renderer.Camera;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -82,6 +88,18 @@ public class Scene {
      */
     public Scene setLights(LightSource... lights) {
         this.lights.addAll(Arrays.stream(lights).toList());
+        return this;
+    }
+
+
+    public Scene addAxes(){
+        Intersectable axisX = new Tube(new Ray(Point.ZERO,Vector.AXIS_X), 0.01)
+                .setEmission(new Color(1,0,0));
+        Intersectable axisY = new Tube(new Ray(Point.ZERO,Vector.AXIS_Y), 0.01)
+                .setEmission(new Color(0,0,1));
+        Intersectable axisZ = new Tube(new Ray(Point.ZERO,Vector.AXIS_Z), 0.01)
+                .setEmission(new Color(0,1,0));
+        geometries.add(axisX, axisY, axisZ);
         return this;
     }
 }

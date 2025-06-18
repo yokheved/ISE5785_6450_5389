@@ -5,11 +5,14 @@ import lighting.AmbientLight;
 import org.json.JSONArray;
 import primitives.*;
 import scene.Scene;
+import lighting.*;
 
 import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A parser that reads and processes scene data from a JSON file.
@@ -134,8 +137,13 @@ public class JsonParser extends FileParser {
         if (json.has("ambientLight")) {
             JSONObject alColor = json.getJSONObject("ambientLight").getJSONObject("color");
             scene.setAmbientLight(new AmbientLight(
-                    new Color(alColor.getInt("r"), alColor.getInt("g"), alColor.getInt("b")))
-            );
+                    new Color(alColor.getInt("r"), alColor.getInt("g"), alColor.getInt("b"))
+            ));
+        }
+
+        if(json.has("lights")){
+            JSONArray lights = json.getJSONArray("lights");
+            scene.setLights(parseLights(lights));
         }
 
         if (json.has("geometries")) {
@@ -146,10 +154,10 @@ public class JsonParser extends FileParser {
     }
 
     /**
-     * Parses the "geometries" section of the JSON and constructs a Geometries object.
+     * Parses the "geometries" section of the JSON and constructs a {@link Geometries} object.
      *
      * @param json the JSON object containing geometry definitions
-     * @return a Geometries object with all parsed geometries
+     * @return a {@link Geometries} object with all parsed geometries
      */
     private Geometries parseGeometries(JSONObject json) {
         Geometries geometries = new Geometries();
@@ -210,6 +218,16 @@ public class JsonParser extends FileParser {
                 geometry.setMaterial(parseMaterial(geoObj.getJSONObject("material")));
             }
 
+            if (geoObj.has("emission")) {
+                JSONObject emissionObj = geoObj.getJSONObject("emission");
+                Color emission = new Color(
+                        emissionObj.getInt("r"),
+                        emissionObj.getInt("g"),
+                        emissionObj.getInt("b")
+                );
+                geometry.setEmission(emission);
+            }
+
             geometries.add(geometry);
         }
 
@@ -217,29 +235,57 @@ public class JsonParser extends FileParser {
     }
 
     /**
-     * Parses a JSON object into a Material instance.
+     * Parses a JSON object representing material properties into a {@link Material} instance.
      *
      * @param material the JSON object describing material properties
-     * @return the Material object
+     * @return the constructed {@link Material} object
      */
     private Material parseMaterial(JSONObject material) {
-        JSONObject ka = material.getJSONObject("ka");
-        Double3 kaD3;
+        Material mat = new Material();
 
-        if (ka.has("x")) {
-            kaD3 = parseDouble3(ka);
-        } else {
-            kaD3 = new Double3(ka.getDouble("d"));
+        if (material.has("ka")) {
+            JSONObject ka = material.getJSONObject("ka");
+            Double3 kaD3 = ka.has("x") ? parseDouble3(ka) : new Double3(ka.getDouble("d"));
+            mat.setKA(kaD3);
         }
 
-        return new Material().setKA(kaD3);
+        if (material.has("kd")) {
+            JSONObject kd = material.getJSONObject("kd");
+            Double3 kdD3 = kd.has("x") ? parseDouble3(kd) : new Double3(kd.getDouble("d"));
+            mat.setKD(kdD3);
+        }
+
+        if (material.has("ks")) {
+            JSONObject ks = material.getJSONObject("ks");
+            Double3 ksD3 = ks.has("x") ? parseDouble3(ks) : new Double3(ks.getDouble("d"));
+            mat.setKS(ksD3);
+        }
+
+        if (material.has("nSh")) {
+            mat.setnSh(material.getDouble("nSh"));
+        }
+
+        if (material.has("kt")) {
+            JSONObject kt = material.getJSONObject("kt");
+            Double3 ktD3 = kt.has("x") ? parseDouble3(kt) : new Double3(kt.getDouble("d"));
+            mat.setKT(ktD3);
+        }
+
+        if (material.has("kr")) {
+            JSONObject kr = material.getJSONObject("kr");
+            Double3 krD3 = kr.has("x") ? parseDouble3(kr) : new Double3(kr.getDouble("d"));
+            mat.setKR(krD3);
+        }
+
+
+        return mat;
     }
 
     /**
-     * Parses a JSON object into a Double3.
+     * Parses a JSON object with x, y, and z fields into a {@link Double3} instance.
      *
-     * @param double3 the JSON object with x, y, and z
-     * @return the Double3 object
+     * @param double3 the JSON object representing a Double3 vector
+     * @return the parsed {@link Double3} value
      */
     private Double3 parseDouble3(JSONObject double3) {
         double x = double3.getDouble("x");
@@ -249,24 +295,80 @@ public class JsonParser extends FileParser {
     }
 
     /**
-     * Parses a JSON object into a Point instance.
+     * Parses a JSON object with x, y, and z fields into a {@link Point} instance.
      *
-     * @param point the JSON object containing x, y, and z coordinates
-     * @return the corresponding Point object
+     * @param point the JSON object representing a 3D point
+     * @return the parsed {@link Point}
      */
     private Point parsePoint(JSONObject point) {
         return new Point(parseDouble3(point));
     }
 
     /**
-     * Parses a JSON object into a Ray instance.
+     * Parses a JSON object representing a ray with "head" and "direction" fields.
      *
-     * @param rayObj the JSON object containing "head" and "direction"
-     * @return the corresponding Ray object
+     * @param rayObj the JSON object containing ray information
+     * @return the constructed {@link Ray}
      */
     private Ray parseRay(JSONObject rayObj) {
         Point head = parsePoint(rayObj.getJSONObject("head"));
         Point direction = parsePoint(rayObj.getJSONObject("direction"));
         return new Ray(head, new Vector(direction));
+    }
+
+    /**
+     * Parses a JSON array of light sources into an array of {@link LightSource} objects.
+     *
+     * @param lightsArray the JSON array representing light definitions
+     * @return an array of {@link LightSource} objects
+     */
+    private LightSource[] parseLights(JSONArray lightsArray) {
+        List<LightSource> lights = new ArrayList<>();
+
+        for (int i = 0; i < lightsArray.length(); i++) {
+            JSONObject lightObj = lightsArray.getJSONObject(i);
+            String type = lightObj.getString("type").toLowerCase();
+            Color intensity = parseColor(lightObj.getJSONObject("intensity"));
+
+            switch (type) {
+                case "point":
+                    Point position = parsePoint(lightObj.getJSONObject("position"));
+                    lights.add(new PointLight(intensity, position));
+                    break;
+
+                case "spot":
+                    Point spotPosition = parsePoint(lightObj.getJSONObject("position"));
+                    Vector direction = new Vector(parsePoint(lightObj.getJSONObject("direction")));
+                    SpotLight spot = new SpotLight(intensity, spotPosition, direction);
+                    if (lightObj.has("beamWidth")) {
+                        spot.setNarrowBeam(lightObj.getDouble("beamWidth"));
+                    }
+                    lights.add(spot);
+                    break;
+
+                case "directional":
+                    Vector dir = new Vector(parsePoint(lightObj.getJSONObject("direction")));
+                    lights.add(new DirectionalLight(intensity, dir));
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown light type: " + type);
+            }
+        }
+
+        return lights.toArray(new LightSource[0]);
+    }
+
+    /**
+     * Parses a JSON object with "r", "g", and "b" fields into a {@link Color} object.
+     *
+     * @param colorObj the JSON object representing RGB color
+     * @return the parsed {@link Color}
+     */
+    private Color parseColor(JSONObject colorObj) {
+        int r = colorObj.getInt("r");
+        int g = colorObj.getInt("g");
+        int b = colorObj.getInt("b");
+        return new Color(r, g, b);
     }
 }

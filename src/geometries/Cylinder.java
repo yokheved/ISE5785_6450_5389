@@ -105,7 +105,7 @@ public class Cylinder extends Tube {
         }
 
         Vector u = capCenter.subtract(p0);
-        double t = u.dotProduct(capNormal) / denominator;
+        double t = Util.alignZero(u.dotProduct(capNormal) / denominator);
 
         if (t <= 0 || Util.alignZero(t - maxDistance) > 0) {
             return;
