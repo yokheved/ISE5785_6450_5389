@@ -20,7 +20,15 @@ public class Camera implements Cloneable {
      * Builder class for constructing {@link Camera} objects using a fluent API.
      */
     public static class Builder {
-        final private Camera camera = new Camera();
+        final private Camera camera;
+
+        public Builder(){
+            camera = new Camera();
+        }
+
+        public Builder(Camera old){
+            camera = old;
+        }
 
         /**
          * Sets the location (eye point) of the camera.
@@ -175,19 +183,130 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * Moves the camera forward or backward along its viewing direction.
+         *
+         * @param delta the distance to move the camera along the viewing direction
+         * @return this builder
+         */
+        public Builder zoom(double delta) {
+            camera.p0 = camera.p0.add(camera.VTo.scale(delta));
+            return this;
+        }
+
+        /**
+         * Moves the camera by a given vector and adjusts its viewing direction to look at the center point.
+         *
+         * @param delta the vector by which to move the camera
+         * @return this builder
+         */
+        public Builder moveAndLookAt(Vector delta) {
+            camera.p0 = camera.p0.add(delta);
+            Vector newVTo = camera.pc.subtract(camera.p0).normalize();
+            camera.VTo = newVTo;
+            camera.VRight = camera.VTo.crossProduct(camera.VUp).normalize();
+            camera.VUp = camera.VRight.crossProduct(camera.VTo).normalize();
+            return this;
+        }
+
+        /**
+         * Rotates the camera around its viewing direction by the specified angle.
+         *
+         * @param angleDegrees the angle in degrees to rotate the camera
+         * @return this builder
+         */
+        public Builder roll(double angleDegrees) {
+            double angleRadians = Math.toRadians(angleDegrees);
+
+            // Special case handling for ±90° (cosine = 0)
+            if (isZero(Math.cos(angleRadians))) {
+                Vector newVUp = camera.VRight.scale(Math.signum(Math.sin(angleRadians))).normalize();
+                Vector newVRight = camera.VTo.crossProduct(newVUp).normalize();
+
+                camera.VUp = newVUp;
+                camera.VRight = newVRight;
+                return this;
+            }
+
+            // Special case handling for 0° or 180° (sine = 0)
+            if (isZero(Math.sin(angleRadians))) {
+                if (angleDegrees == 180 || angleDegrees == -180) {
+                    camera.VUp = camera.VUp.scale(-1); // Flip the VUp vector
+                }
+                return this;
+            }
+
+            // General case
+            Vector newVUp = camera.VUp.scale(Math.cos(angleRadians))
+                    .add(camera.VRight.scale(Math.sin(angleRadians)))
+                    .normalize();
+            Vector newVRight = camera.VTo.crossProduct(newVUp).normalize();
+
+            camera.VUp = newVUp;
+            camera.VRight = newVRight;
+            return this;
+        }
+
     }
 
+    /**
+     * Represents the viewing direction vector of the camera.
+     */
     private Vector VTo;
+
+    /**
+     * Represents the upward direction vector of the camera.
+     */
     private Vector VUp;
+
+    /**
+     * Represents the rightward direction vector of the camera.
+     */
     private Vector VRight;
+
+    /**
+     * Represents the position of the camera in 3D space.
+     */
     private Point p0;
+
+    /**
+     * Represents the width of the view plane.
+     */
     double width = 0;
+
+    /**
+     * Represents the height of the view plane.
+     */
     double height = 0;
+
+    /**
+     * Represents the distance from the camera to the view plane.
+     */
     double distance = 0;
+
+    /**
+     * Represents the center point of the view plane.
+     */
     private Point pc;
+
+    /**
+     * Handles writing the rendered image to a file.
+     */
     ImageWriter imageWriter;
+
+    /**
+     * Handles ray tracing for rendering the scene.
+     */
     RayTracerBase rayTracerBase;
+
+    /**
+     * Represents the number of columns in the view plane resolution.
+     */
     int nX = 1;
+
+    /**
+     * Represents the number of rows in the view plane resolution.
+     */
     int nY = 1;
 
     private Camera() {
@@ -202,13 +321,17 @@ public class Camera implements Cloneable {
         return new Builder();
     }
 
+    public static Builder getBuilder(Camera oldCamera){
+        return  new Builder(oldCamera);
+    }
+
     /**
      * Constructs a ray through a specific pixel in the view plane.
      *
-     * @param nX total number of columns
-     * @param nY total number of rows
-     * @param j  column index
-     * @param i  row index
+     * @param nX total number of columns in the view plane
+     * @param nY total number of rows in the view plane
+     * @param j  column index of the pixel
+     * @param i  row index of the pixel
      * @return the constructed ray
      */
     public Ray constructRay(int nX, int nY, int j, int i) {
@@ -229,7 +352,7 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Renders the image by casting rays through every pixel.
+     * Renders the image by casting rays through every pixel in the view plane.
      *
      * @return the camera instance (for method chaining)
      */
@@ -243,10 +366,10 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Draws a grid on the image with the specified interval and color.
+     * Draws a grid on the rendered image with the specified interval and color.
      *
-     * @param color    the grid color
-     * @param interval spacing between grid lines
+     * @param color    the color of the grid lines
+     * @param interval the spacing between grid lines
      * @return the camera instance (for method chaining)
      */
     public Camera printGrid(Color color, int interval) {
@@ -270,7 +393,7 @@ public class Camera implements Cloneable {
     /**
      * Writes the rendered image to a file with the specified name.
      *
-     * @param imageName the file name
+     * @param imageName the name of the file to write the image to
      * @return the camera instance (for method chaining)
      */
     public Camera writeToImage(String imageName) {
@@ -279,12 +402,12 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Casts a single ray through the given pixel and colors it in the image.
+     * Casts a single ray through the specified pixel and colors it in the rendered image.
      *
-     * @param nx     total number of columns
-     * @param ny     total number of rows
-     * @param column column index
-     * @param row    row index
+     * @param nx     total number of columns in the view plane
+     * @param ny     total number of rows in the view plane
+     * @param column column index of the pixel
+     * @param row    row index of the pixel
      */
     private void castRay(int nx, int ny, int column, int row) {
         Ray ray = constructRay(nx, ny, column, row);

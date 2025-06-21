@@ -98,7 +98,7 @@ public class Material {
      * @param nSh the shininess factor
      * @return this material instance (for method chaining)
      */
-    public Material setnSh(double nSh) {
+    public Material setShininess(double nSh) {
         this.nSh = nSh;
         return this;
     }

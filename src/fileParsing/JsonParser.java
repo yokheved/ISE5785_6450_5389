@@ -262,7 +262,7 @@ public class JsonParser extends FileParser {
         }
 
         if (material.has("nSh")) {
-            mat.setnSh(material.getDouble("nSh"));
+            mat.setShininess(material.getDouble("nSh"));
         }
 
         if (material.has("kt")) {
