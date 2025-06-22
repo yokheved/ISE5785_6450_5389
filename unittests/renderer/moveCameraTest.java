@@ -79,7 +79,7 @@ public class moveCameraTest {
         // Create a new camera using the constructor with a parameter
         Camera movedAndZoomedCamera = new Camera.Builder(initialCamera)
                 .moveAndLookAt(new Vector(1, 5, 3))
-                .zoom(8)
+                .zoom(20)
                 .roll(30)
                 .build();
 
