@@ -73,4 +73,17 @@ public class moveCameraTest {
 
         // Comment: The image will show the scene flipped vertically due to the 180-degree roll.
     }
+
+    @Test
+    public void testMoveAndLookAtWithZoom() throws CloneNotSupportedException {
+        // Create a new camera using the constructor with a parameter
+        Camera movedAndZoomedCamera = new Camera.Builder(initialCamera)
+                .moveAndLookAt(new Vector(1, 5, 3))
+                .zoom(8)
+                .roll(30)
+                .build();
+
+        // Render a simple scene with the moved and zoomed camera
+        movedAndZoomedCamera.renderImage().writeToImage("movedAndZoomedCameraTest");
+    }
 }
