@@ -1,12 +1,10 @@
 package renderer;
 
-import primitives.Color;
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 import scene.Scene;
 
 import java.util.MissingResourceException;
+import java.util.List;
 
 import static primitives.Util.isZero;
 
@@ -22,11 +20,11 @@ public class Camera implements Cloneable {
     public static class Builder {
         final private Camera camera;
 
-        public Builder(){
+        public Builder() {
             camera = new Camera();
         }
 
-        public Builder(Camera old){
+        public Builder(Camera old) {
             camera = old;
         }
 
@@ -131,9 +129,9 @@ public class Camera implements Cloneable {
          * Finalizes and builds the camera.
          *
          * @return the constructed camera
-         * @throws CloneNotSupportedException        if cloning fails
-         * @throws MissingResourceException          if essential camera properties are missing
-         * @throws IllegalArgumentException          if resolution is invalid
+         * @throws CloneNotSupportedException if cloning fails
+         * @throws MissingResourceException   if essential camera properties are missing
+         * @throws IllegalArgumentException   if resolution is invalid
          */
         public Camera build() throws CloneNotSupportedException {
             String exceptionMessageProblem = "renderer data messing";
@@ -190,7 +188,7 @@ public class Camera implements Cloneable {
          * @return this builder
          */
         public Builder zoom(double delta) {
-            camera.p0 = camera.p0.add(camera.VTo.scale(delta));
+            moveAndLookAt(camera.VTo.scale(delta));
             return this;
         }
 
@@ -201,7 +199,7 @@ public class Camera implements Cloneable {
          * @return this builder
          */
         public Builder moveAndLookAt(Vector delta) {
-            camera.p0 = camera.p0.add(delta);
+            camera.p0 = Transform.movePoints(delta, camera.p0).get(0);
             Vector newVTo = camera.pc.subtract(camera.p0).normalize();
             camera.VTo = newVTo;
             camera.VRight = camera.VTo.crossProduct(camera.VUp).normalize();
@@ -216,34 +214,12 @@ public class Camera implements Cloneable {
          * @return this builder
          */
         public Builder roll(double angleDegrees) {
-            double angleRadians = Math.toRadians(angleDegrees);
-
-            // Special case handling for ±90° (cosine = 0)
-            if (isZero(Math.cos(angleRadians))) {
-                Vector newVUp = camera.VRight.scale(Math.signum(Math.sin(angleRadians))).normalize();
-                Vector newVRight = camera.VTo.crossProduct(newVUp).normalize();
-
-                camera.VUp = newVUp;
-                camera.VRight = newVRight;
-                return this;
-            }
-
-            // Special case handling for 0° or 180° (sine = 0)
-            if (isZero(Math.sin(angleRadians))) {
-                if (angleDegrees == 180 || angleDegrees == -180) {
-                    camera.VUp = camera.VUp.scale(-1); // Flip the VUp vector
-                }
-                return this;
-            }
-
-            // General case
-            Vector newVUp = camera.VUp.scale(Math.cos(angleRadians))
-                    .add(camera.VRight.scale(Math.sin(angleRadians)))
-                    .normalize();
-            Vector newVRight = camera.VTo.crossProduct(newVUp).normalize();
-
-            camera.VUp = newVUp;
-            camera.VRight = newVRight;
+            // Rotate the camera's up vector around the viewing direction
+            camera.VUp = Transform.rotateVectorsClockwise(
+                    angleDegrees, new Ray(camera.p0, camera.VTo), camera.VUp
+            ).get(0);
+            // Recalculate the right vector
+            camera.VRight = camera.VTo.crossProduct(camera.VUp).normalize();
             return this;
         }
 
@@ -321,8 +297,8 @@ public class Camera implements Cloneable {
         return new Builder();
     }
 
-    public static Builder getBuilder(Camera oldCamera){
-        return  new Builder(oldCamera);
+    public static Builder getBuilder(Camera oldCamera) {
+        return new Builder(oldCamera);
     }
 
     /**
