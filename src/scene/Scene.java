@@ -90,16 +90,4 @@ public class Scene {
         this.lights.addAll(Arrays.stream(lights).toList());
         return this;
     }
-
-
-    public Scene addAxes(){
-        Intersectable axisX = new Tube(new Ray(Point.ZERO,Vector.AXIS_X), 0.01)
-                .setEmission(new Color(1,0,0));
-        Intersectable axisY = new Tube(new Ray(Point.ZERO,Vector.AXIS_Y), 0.01)
-                .setEmission(new Color(0,0,1));
-        Intersectable axisZ = new Tube(new Ray(Point.ZERO,Vector.AXIS_Z), 0.01)
-                .setEmission(new Color(0,1,0));
-        geometries.add(axisX, axisY, axisZ);
-        return this;
-    }
 }

@@ -12,6 +12,7 @@ import static primitives.Util.isZero;
  * @param  d3 first number
  * @author    Dan Zilberstein
  */
+
 public record Double3(double d1, double d2, double d3) {
 
    /** Zero triad (0,0,0) */

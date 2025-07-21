@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import geometries.*;
 import lighting.*;
 import primitives.*;
+import renderer.rayTracer.RayTracerType;
 import scene.Scene;
 
 /**

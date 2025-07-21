@@ -1,10 +1,11 @@
 package renderer;
 
 import primitives.*;
+import renderer.rayTracer.*;
 import scene.Scene;
 
-import java.util.MissingResourceException;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import static primitives.Util.isZero;
 
@@ -163,6 +164,19 @@ public class Camera implements Cloneable {
 
             camera.pc = camera.p0.add(camera.VTo.scale(camera.distance));
 
+            if(camera.rayTracerBase instanceof AdvancedRayTracer advancedRayTracer) {
+                //if imageEnhancements contains an Antialiasing object, set the pixel for it
+                for (AdvancedRayTracer enhancement : advancedRayTracer.enhancements) {
+                    if (enhancement instanceof Antialiasing antialiasing) {
+                        antialiasing.setTargetArea(
+                                camera.VRight, camera.VUp,
+                                camera.height/ camera.nY, camera.width/ camera.nX,
+                                camera.pc
+                        );
+                    }
+                }
+            }
+
             return (Camera) camera.clone();
         }
 
@@ -176,7 +190,34 @@ public class Camera implements Cloneable {
         public Builder setRayTracer(Scene scene, RayTracerType rayTracerType) {
             switch (rayTracerType) {
                 case SIMPLE -> camera.rayTracerBase = new SimpleRayTracer(scene);
+                case ADVANCED -> camera.rayTracerBase = new AdvancedRayTracer(scene);
                 default -> camera.rayTracerBase = null;
+            }
+            return this;
+        }
+
+        public Builder setEnhancements(AdvancedRayTracer... imageEnhancements){
+            ((AdvancedRayTracer) camera.rayTracerBase).addEnhancements(imageEnhancements);
+            if(camera.rayTracerBase == null || !(camera.rayTracerBase instanceof AdvancedRayTracer)) {
+                throw new IllegalStateException("Ray tracer must be an instance of AdvancedRayTracer to add enhancements");
+            }
+            return this;
+        }
+
+        public Builder setAccelerations(Scene scene, AccelerationType... accelerations) {
+            if (camera.rayTracerBase == null || !(camera.rayTracerBase instanceof AdvancedRayTracer)) {
+                throw new IllegalStateException("Ray tracer must be an instance of AdvancedRayTracer to add accelerations");
+            }
+            for(AccelerationType acceleration : accelerations) {
+                switch (acceleration) {
+                    case ADAPTIVE_SUPER_SAMPLING -> {
+                        List<AdvancedRayTracer> enhancements =
+                                ((AdvancedRayTracer) camera.rayTracerBase).enhancements;
+                        camera.rayTracerBase = new AdaptiveSuperSamplingRayTracer(scene);
+                        ((AdvancedRayTracer) camera.rayTracerBase).enhancements = enhancements;
+                    }
+                    default -> throw new IllegalArgumentException("Unknown acceleration type: " + acceleration);
+                }
             }
             return this;
         }

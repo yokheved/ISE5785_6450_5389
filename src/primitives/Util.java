@@ -52,4 +52,12 @@ public final class Util {
       return Math.random() * (max - min) + min;
    }
 
+    public static boolean isPowerOfTwoPlusOne(double num) {
+      num--;
+        if (num <= 0) return false;
+        double logResult = Math.log(num) / Math.log(2); // log base 2
+        return Math.floor(logResult) == logResult;          // checks for exact integer
+    }
+
+
 }

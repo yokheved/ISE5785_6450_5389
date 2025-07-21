@@ -2,11 +2,9 @@ package renderer;
 
 import fileParsing.FileParser;
 import fileParsing.JsonParser;
-import geometries.Geometries;
-import geometries.Sphere;
-import lighting.AmbientLight;
 import org.junit.jupiter.api.Test;
 import primitives.*;
+import renderer.rayTracer.RayTracerType;
 import scene.Scene;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

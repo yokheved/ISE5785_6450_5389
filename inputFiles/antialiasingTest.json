@@ -1,0 +1,51 @@
+{
+  "background": { "r": 30, "g": 30, "b": 30 },
+  "ambientLight": { "color": { "r": 60, "g": 60, "b": 60 } },
+  "lights": [
+    {
+      "type": "directional",
+      "direction": { "x": -1, "y": -1, "z": -1 },
+      "intensity": { "r": 150, "g": 140, "b": 130 }
+    },
+    {
+      "type": "point",
+      "position": { "x": 20, "y": 20, "z": -10 },
+      "intensity": { "r": 200, "g": 200, "b": 255 }
+    },
+    {
+      "type": "spot",
+      "position": { "x": -15, "y": 15, "z": -5 },
+      "direction": { "x": 1, "y": -1, "z": 0 },
+      "angle": 25,
+      "intensity": { "r": 255, "g": 180, "b": 180 }
+    }
+  ],
+  "geometries": [
+    { "type": "plane", "name": "floor", "point": { "x": 0, "y": -10, "z": 0 }, "normal": { "x": 0, "y": 1, "z": 0 }, "material": { "ka": { "d": 0.2 }, "kd": { "d": 0.8 }, "ks": { "d": 0.2 }, "nSh": 10 } },
+    { "type": "plane", "name": "back wall", "point": { "x": 0, "y": 0, "z": -50 }, "normal": { "x": 0, "y": 0, "z": 1 }, "material": { "ka": { "d": 0.2 }, "kd": { "d": 0.8 }, "ks": { "d": 0.2 }, "nSh": 10 } },
+
+    { "type": "sphere", "name": "red sphere", "center": { "x": -15, "y": 0, "z": -30 }, "radius": 5, "material": { "ka": { "x": 1, "y": 0, "z": 0 }, "kd": { "x": 1, "y": 0, "z": 0 }, "ks": { "d": 0.3 }, "nSh": 50 } },
+    { "type": "sphere", "name": "green sphere", "center": { "x": 0, "y": 0, "z": -20 }, "radius": 5, "material": { "ka": { "x": 0, "y": 1, "z": 0 }, "kd": { "x": 0, "y": 1, "z": 0 }, "ks": { "d": 0.3 }, "nSh": 50 } },
+    { "type": "sphere", "name": "blue sphere", "center": { "x": 15, "y": 0, "z": -15 }, "radius": 8, "material": { "ka": { "x": 0, "y": 0, "z": 1 }, "kd": { "x": 0, "y": 0, "z": 1 }, "ks": { "d": 0.3 }, "nSh": 50 } },
+
+    { "type": "cylinder", "name": "yellow cylinder", "axisRay": { "head": { "x": -10, "y": -10, "z": -40 }, "direction": { "x": 0, "y": 1, "z": 0 } }, "radius": 2, "height": 15, "material": { "ka": { "x": 1, "y": 1, "z": 0 }, "kd": { "x": 1, "y": 1, "z": 0 }, "ks": { "d": 0.4 }, "nSh": 30 } },
+
+    { "type": "tube", "name": "purple tube", "axisRay": { "head": { "x": 10, "y": -10, "z": -40 }, "direction": { "x": 0, "y": 1, "z": 0 } }, "radius": 1, "material": { "ka": { "x": 0.5, "y": 0, "z": 0.5 }, "kd": { "x": 0.5, "y": 0, "z": 0.5 }, "ks": { "d": 0.4 }, "nSh": 30 } },
+
+    { "type": "triangle", "name": "cyan triangle", "p0": { "x": -5, "y": -10, "z": -15 }, "p1": { "x": 0, "y": 5, "z": -15 }, "p2": { "x": 5, "y": -10, "z": -15 }, "material": { "ka": { "x": 0, "y": 1, "z": 1 }, "kd": { "x": 0, "y": 1, "z": 1 }, "ks": { "d": 0.2 }, "nSh": 20 } },
+
+    { "type": "polygon", "name": "orange square", "vertices": [
+      { "x": -8, "y": -9.3, "z": -10 },
+      { "x": -8, "y": -9.3, "z": -15 },
+      { "x": -13, "y": -9.3, "z": -15 },
+      { "x": -13, "y": -9.3, "z": -10 }
+    ], "material": { "ka": { "x": 1, "y": 0.5, "z": 0 }, "kd": { "x": 1, "y": 0.5, "z": 0 }, "ks": { "d": 0.3 }, "nSh": 20 } },
+
+    { "type": "polygon", "name": "grey square", "vertices": [
+      { "x": 8, "y": -9.5, "z": -10 },
+      { "x": 8, "y": -9.5, "z": -15 },
+      { "x": 13, "y": -9.5, "z": -15 },
+      { "x": 13, "y": -9.5, "z": -10 }
+    ], "material": { "ka": { "d": 0.3 }, "kd": { "d": 0.5 }, "ks": { "d": 0.2 }, "nSh": 10 } }
+  ]
+}

@@ -1,14 +1,11 @@
 package renderer;
 
-import static java.awt.Color.*;
-
 import fileParsing.FileParser;
 import fileParsing.JsonParser;
 import org.junit.jupiter.api.Test;
 
-import geometries.*;
-import lighting.AmbientLight;
 import primitives.*;
+import renderer.rayTracer.RayTracerType;
 import scene.Scene;
 
 public class renderPictures {

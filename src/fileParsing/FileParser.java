@@ -29,7 +29,7 @@ public abstract class FileParser {
     public Scene getScene(Scene scene){
         File file = openFile(fileName);
         if(!validateFile(file))
-            throw new IllegalArgumentException("Invalid JSON file format: " + file.getName());
+            throw new IllegalArgumentException("Invalid file format: " + file.getName());
         String rawData = extractData(file);
         analyzeData(rawData, scene);
         return scene;
