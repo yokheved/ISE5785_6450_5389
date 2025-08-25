@@ -144,4 +144,9 @@ public class Ray {
 
         return closest;
     }
+
+    public Ray(Point head, Point to){
+        this.head = head;
+        this.direction = to.subtract(head).normalize();
+    }
 }

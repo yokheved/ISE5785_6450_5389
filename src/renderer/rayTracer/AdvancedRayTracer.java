@@ -13,10 +13,10 @@ import java.util.List;
 public class AdvancedRayTracer extends RayTracerBase {
     public List<AdvancedRayTracer> enhancements = new LinkedList<>();
 
-    BeamConstructorBase beamConstructor;
+    TargetAreaBase targetAreaBase;
 
-    public AdvancedRayTracer setRayConstructor(BeamConstructorBase rayConstructor) {
-        this.beamConstructor = rayConstructor;
+    public AdvancedRayTracer setRayConstructor(TargetAreaBase rayConstructor) {
+        this.targetAreaBase = rayConstructor;
         return this;
     }
 
@@ -30,10 +30,10 @@ public class AdvancedRayTracer extends RayTracerBase {
     }
 
     public AdvancedRayTracer setTargetArea(Vector vRight, Vector vUp, double height, double width, Point onSurface) {
-        if (beamConstructor == null || height <= 0 || width <= 0 || vRight.dotProduct(vUp) != 0) {
+        if (targetAreaBase == null || height <= 0 || width <= 0 || vRight.dotProduct(vUp) != 0) {
             throw new IllegalStateException("Beam constructor is not set");
         }
-        beamConstructor.setTargetArea(vRight, vUp, height, width, onSurface);
+        targetAreaBase.setTargetArea(vRight, vUp, height, width, onSurface);
         return this;
     }
 
@@ -46,7 +46,7 @@ public class AdvancedRayTracer extends RayTracerBase {
         //if enhancements contains an object of class Antialiasing, use it to trace the ray
         for (AdvancedRayTracer enhancement : enhancements) {
             if (enhancement instanceof Antialiasing antialiasing) {
-                antialiasing.beamConstructor = antialiasing.beamConstructor.copyTargetArea(ray);
+                antialiasing.targetAreaBase = antialiasing.copyTargetArea(ray);
                 return superSampling(ray, antialiasing, 1, 0);
             }
         }
@@ -55,29 +55,28 @@ public class AdvancedRayTracer extends RayTracerBase {
 
     protected Color superSampling(Ray ray, AdvancedRayTracer advanced, int depth, int topLeftIndex) {
         // Calculate the color of the first ray
-        double maxDepth = Math.sqrt(advanced.beamConstructor.MAX_RAYS_PER_BEAM)-1;
+        double maxDepth = Math.sqrt(advanced.getMaxRaysPerBeam())-1;
         // Base case: if too few rays, return scaled color
         if (depth >= maxDepth) {
             return advanced.calculateColor(ray).scale(1.0 / depth * depth);
         }
-        List<Ray> rays = advanced.beamConstructor
-                .subCellSampleRaysFromInnerPoint(depth,ray.getHead());
+        List<Ray> rays = advanced.subCellSampleRaysFromInnerPoint(depth,ray.getHead());
         return superSamplingRecusiveCall(rays, advanced, depth, topLeftIndex, maxDepth);
     }
 
     protected Color superSamplingRecusiveCall(
             List<Ray> rays, AdvancedRayTracer advanced, int depth, int topLeftIndex, double maxDepth
     ) {
-        List<Integer> cornerIndices = getCornerIndices(topLeftIndex, depth, (int) maxDepth);
+        List<Integer> cornerIndices = getCornerIndices(topLeftIndex, depth, (int) maxDepth, advanced);
         int topRightIndex = cornerIndices.get(3);
         int bottomLeftIndex = cornerIndices.get(0);
         int bottomRightIndex = cornerIndices.get(1);
         Point head = rays.get(0).getHead();
 
-        Ray topLeftRay = advanced.beamConstructor.getCenterRay(topLeftIndex, depth, head);
-        Ray topRightRay = advanced.beamConstructor.getCenterRay(topRightIndex, depth, head);
-        Ray bottomLeftRay = advanced.beamConstructor.getCenterRay(bottomLeftIndex, depth, head);
-        Ray bottomRightRay = advanced.beamConstructor.getCenterRay(bottomRightIndex, depth, head);
+        Ray topLeftRay = advanced.getCenterRay(topLeftIndex, depth, head);
+        Ray topRightRay = advanced.getCenterRay(topRightIndex, depth, head);
+        Ray bottomLeftRay = advanced.getCenterRay(bottomLeftIndex, depth, head);
+        Ray bottomRightRay = advanced.getCenterRay(bottomRightIndex, depth, head);
 
         Color bottomLeftColor = superSampling(bottomLeftRay, advanced, depth + 1, bottomLeftIndex);
         Color bottomRightColor = superSampling(bottomRightRay, advanced, depth + 1, bottomRightIndex);
@@ -98,23 +97,41 @@ public class AdvancedRayTracer extends RayTracerBase {
 
 
     protected Color getColor(Ray ray, int index, AdvancedRayTracer advanced) {
-        Color subCellColor = advanced.beamConstructor.getColorForRay(index);
+        Color subCellColor = targetAreaBase.getColorForPoint(index);
         if (subCellColor == null) {
             subCellColor = advanced.calculateColor(ray);
-            advanced.beamConstructor.putColorForRay(index, subCellColor);
+            targetAreaBase.putColorForPoint(index, subCellColor);
         }
         return subCellColor;
     }
 
-    protected List<Integer> getCornerIndices(int indexTopLeft, int depth, int maxDepth) {
-        int gridSize = (int) Math.pow(2, depth - 1);
-        int step = (int) Math.ceil(maxDepth / (depth * 2));
-        int topLeftIndex = indexTopLeft;
-        int topRightIndex = topLeftIndex + step;
-        int bottomLeftIndex = topLeftIndex + step * gridSize;
-        int bottomRightIndex = bottomLeftIndex + step;
+    protected List<Integer> getCornerIndices(int indexTopLeft, int depth, int maxDepth, AdvancedRayTracer advanced) {
+        return advanced.targetAreaBase.getCornerIndices(indexTopLeft, depth, maxDepth);
+    }
 
-        return List.of(bottomLeftIndex, bottomRightIndex, topLeftIndex, topRightIndex);
+    protected Ray getCenterRay(int indexTopLeft, int depth, Point head) {
+        return new Ray(head, targetAreaBase.getCenterPoint(indexTopLeft, depth));
+    }
+
+    protected Point getCenterSubCell(int index, int depth) {
+        return targetAreaBase.getCenterSubCell(index, depth);
+    }
+
+    protected List<Ray> subCellSampleRaysFromInnerPoint(int depth, Point head) {
+        List<Point> points = targetAreaBase.subCellSampleRaysFromInnerPoint(depth);
+        List<Ray> rays = new LinkedList<>();
+        for(Point point : points) {
+            rays.add(new Ray(head, point));
+        }
+        return rays;
+    }
+
+    protected int getMaxRaysPerBeam() {
+        return targetAreaBase.MAX_RAYS_PER_BEAM;
+    }
+
+    protected TargetAreaBase copyTargetArea(Ray ray) {
+        return targetAreaBase.copyTargetArea(ray);
     }
 
 }

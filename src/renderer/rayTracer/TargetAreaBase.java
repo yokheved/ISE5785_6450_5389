@@ -8,7 +8,7 @@ import java.util.List;
 
 import static primitives.Util.isZero;
 
-public abstract class BeamConstructorBase {
+public abstract class TargetAreaBase {
 
     int MAX_RAYS_PER_BEAM = 1;
 
@@ -19,7 +19,7 @@ public abstract class BeamConstructorBase {
     // New field in your class:
     List<Color> targetAreaGrid;
 
-    public BeamConstructorBase setTargetArea(Vector vRight, Vector vUp, double height, double width, Point pc) {
+    public TargetAreaBase setTargetArea(Vector vRight, Vector vUp, double height, double width, Point pc) {
         if (vRight == null || vUp == null || height <= 0 || width <= 0 || !isZero(vRight.dotProduct(vUp))) {
             throw new IllegalArgumentException("Invalid parameters for pixel setup");
         }
@@ -33,14 +33,14 @@ public abstract class BeamConstructorBase {
         return this;
     }
 
-    public BeamConstructorBase(int maxRaysPerBeam) {
+    public TargetAreaBase(int maxRaysPerBeam) {
         if (!Util.isPowerOfTwoPlusOne(Math.sqrt(maxRaysPerBeam))) {
             throw new IllegalArgumentException("Max rays per beam must be a power of two, plus one");
         }
         MAX_RAYS_PER_BEAM = maxRaysPerBeam;
     }
 
-    public abstract BeamConstructorBase copyTargetArea(Ray ray);
+    public abstract TargetAreaBase copyTargetArea(Ray ray);
 
 
     /**
@@ -48,17 +48,16 @@ public abstract class BeamConstructorBase {
      * The rays are jittered around the corners of the subcell.
      *
      * @param depth the depth of the subcell
-     * @param head   the head of the ray from which the rays will be sampled
-     * @return a list of rays sampled from the inner point of the cell in this order:
+     * @return a list of points sampled from the inner point of the cell in this order:
      *         bottom-left, bottom-right, top-left, top-right
      */
-    public List<Ray> subCellSampleRaysFromInnerPoint(int depth, Point head){
+    public List<Point> subCellSampleRaysFromInnerPoint(int depth){
         List<Point> points = new LinkedList<>();
 
         double cellHeight = height / depth;
         double cellWidth = width / depth;
 
-        Point bottomLeft = pc
+        Point bottomLeft = getCenterSubCell(0, depth)
                 .add(vRight.scale(-cellWidth/2))
                 .add(vUp.scale(-cellHeight/2));
 
@@ -75,22 +74,10 @@ public abstract class BeamConstructorBase {
         points.add(bottomLeft.add(vRight.scale(cellWidth/2))
                 .add(vUp.scale(-cellHeight/2d)));
 
-        return constructRaysFromPoints(points, head);
+        return points;
     }
 
-    protected List<Ray> constructRaysFromPoints(List<Point> points, Point head) {
-        List<Ray> rays = new LinkedList<>();
-        for (int i = 0; i < points.size(); i++) {
-            Point p = points.get(i);
-            // Calculate the direction vector from the ray's head to the point on the blackboard
-            Vector direction = p.subtract(head);
-            // Create a new ray with the ray's head and the calculated direction
-            rays.add(new Ray(head, direction));
-        }
-        return rays;
-    }
-
-    public abstract Ray getCenterRay(int index, int depth, Point head);
+    public abstract Point getCenterPoint(int index, int depth);
 
     /**
      * Inserts a color in the targetAreaGrid based on the ray's position.
@@ -98,7 +85,7 @@ public abstract class BeamConstructorBase {
      * @param index   the index in targetAreaGrid to insert the color
      * @param color the color to insert
      */
-    public void putColorForRay(int index, Color color) {
+    public void putColorForPoint(int index, Color color) {
         // Ensure list is initialized up to index
         while (targetAreaGrid.size() <= index) {
             targetAreaGrid.add(null);
@@ -112,10 +99,32 @@ public abstract class BeamConstructorBase {
      * @param index the index in targetAreaGrid to retrieve the color from
      * @return the color if exists, or null otherwise
      */
-    public Color getColorForRay(int index) {
+    public Color getColorForPoint(int index) {
         if (index < targetAreaGrid.size()) {
             return targetAreaGrid.get(index);
         }
         return null;
+    }
+
+    public Point getCenterSubCell(int index, int depth) {
+        int i = index % (int) Math.pow(2, depth);
+        int j = index / (int) Math.pow(2, depth);
+        double cellWidth = width / Math.pow(2, depth);
+        double cellHeight = height / Math.pow(2, depth);
+        return pc
+                .add(vRight.scale((i + 0.5) * cellWidth))
+                .add(vUp.scale((j + 0.5) * cellHeight));
+    }
+
+
+    protected List<Integer> getCornerIndices(int indexTopLeft, int depth, int maxDepth) {
+        int gridSize = (int) Math.pow(2, depth - 1);
+        int step = (int) Math.ceil(maxDepth / (depth * 2));
+        int topLeftIndex = indexTopLeft;
+        int topRightIndex = topLeftIndex + step;
+        int bottomLeftIndex = topLeftIndex + step * gridSize;
+        int bottomRightIndex = bottomLeftIndex + step;
+
+        return List.of(bottomLeftIndex, bottomRightIndex, topLeftIndex, topRightIndex);
     }
 }

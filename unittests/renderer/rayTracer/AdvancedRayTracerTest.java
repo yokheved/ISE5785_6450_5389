@@ -48,13 +48,13 @@ class AdvancedRayTracerTest {
                 .setRayTracer(scene,RayTracerType.ADVANCED)
                 .setEnhancements(
                         new Antialiasing(scene).setRayConstructor(
-                                new JitteredBeamConstructor(25)
+                                new JitteredTargetArea(81)
                         )
                 )
                 .build();
 
         cameraEnhancement.renderImage().writeToImage("antialiasingTest-antialising");
-        //max rays 25 -> 1 min 25 sec, 2 min 43 sec
+        //max rays 25 -> 1 min 25 sec, 2 min 43 sec, 2 min 53 sec, 1 min 18 sec
     }
 
     @Test
@@ -68,11 +68,11 @@ class AdvancedRayTracerTest {
                 .setRayTracer(scene,RayTracerType.ADVANCED)
                 .setAccelerations(scene, AccelerationType.ADAPTIVE_SUPER_SAMPLING)
                 .setEnhancements(new Antialiasing(scene).setRayConstructor(
-                        new JitteredBeamConstructor(25)
+                        new JitteredTargetArea(81)
                 ))
                 .build();
 
         cameraAcceleration.renderImage().writeToImage("antialiasingTest-adaptiveSuperSampling");
-        //max rays 25 -> 3 min 39 sec
+        //max rays 25 -> 3 min 39 sec, 1 min 11 sec, 30 sec 773 ms
     }
 }

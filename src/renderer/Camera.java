@@ -197,16 +197,20 @@ public class Camera implements Cloneable {
         }
 
         public Builder setEnhancements(AdvancedRayTracer... imageEnhancements){
-            ((AdvancedRayTracer) camera.rayTracerBase).addEnhancements(imageEnhancements);
             if(camera.rayTracerBase == null || !(camera.rayTracerBase instanceof AdvancedRayTracer)) {
-                throw new IllegalStateException("Ray tracer must be an instance of AdvancedRayTracer to add enhancements");
+                throw new IllegalStateException(
+                        "Ray tracer must be an instance of AdvancedRayTracer to add enhancements"
+                );
             }
+            ((AdvancedRayTracer) camera.rayTracerBase).addEnhancements(imageEnhancements);
             return this;
         }
 
         public Builder setAccelerations(Scene scene, AccelerationType... accelerations) {
             if (camera.rayTracerBase == null || !(camera.rayTracerBase instanceof AdvancedRayTracer)) {
-                throw new IllegalStateException("Ray tracer must be an instance of AdvancedRayTracer to add accelerations");
+                throw new IllegalStateException(
+                        "Ray tracer must be an instance of AdvancedRayTracer to add accelerations"
+                );
             }
             for(AccelerationType acceleration : accelerations) {
                 switch (acceleration) {
@@ -428,7 +432,7 @@ public class Camera implements Cloneable {
      */
     private void castRay(int nx, int ny, int column, int row) {
         Ray ray = constructRay(nx, ny, column, row);
-        Color color = rayTracerBase.traceRay(ray);
+         Color color = rayTracerBase.traceRay(ray);
         imageWriter.writePixel(column, row, color);
     }
 }

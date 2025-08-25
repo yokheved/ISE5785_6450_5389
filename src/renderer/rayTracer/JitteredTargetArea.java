@@ -5,17 +5,16 @@ import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
 
-import java.util.List;
 
-public class JitteredBeamConstructor extends BeamConstructorBase {
+public class JitteredTargetArea extends TargetAreaBase {
 
-    public JitteredBeamConstructor(int maxRays) {
+    public JitteredTargetArea(int maxRays) {
         super(maxRays);
     }
 
     @Override
-    public BeamConstructorBase copyTargetArea(Ray ray) {
-        JitteredBeamConstructor copy = new JitteredBeamConstructor(MAX_RAYS_PER_BEAM);
+    public TargetAreaBase copyTargetArea(Ray ray) {
+        JitteredTargetArea copy = new JitteredTargetArea(MAX_RAYS_PER_BEAM);
         double denominator = normal.dotProduct(ray.getDirection());
         if (Util.isZero(denominator)) {
             throw new IllegalArgumentException("Ray is parallel to the target area");
@@ -27,12 +26,13 @@ public class JitteredBeamConstructor extends BeamConstructorBase {
     }
 
     @Override
-    public Ray getCenterRay(int indexTopLeft, int depth, Point head) {
+    public Point getCenterPoint(int indexTopLeft, int depth) {
         int gridSize = (int) Math.pow(2, depth - 1);
         double cellWidth = width / gridSize;
         double cellHeight = height / gridSize;
         Vector jitterX = null;
         Vector jitterY = null;
+        Point pc = getCenterSubCell(indexTopLeft, depth);
         do{
             double randomX = Util.random(-cellWidth / 2, cellWidth / 2);
             try{jitterX = vRight.scale(randomX);}
@@ -45,7 +45,7 @@ public class JitteredBeamConstructor extends BeamConstructorBase {
         }while(jitterY==null);
 
         Point jitteredPoint = pc.add(jitterX).add(jitterY);
-        return constructRaysFromPoints(List.of(jitteredPoint), head).get(0);
+        return jitteredPoint;
     }
 
 }

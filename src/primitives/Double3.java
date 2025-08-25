@@ -99,4 +99,8 @@ public record Double3(double d1, double d2, double d3) {
     *               triad, false otherwise
     */
    public boolean lowerThan(Double3 other) { return d1 < other.d1 && d2 < other.d2 && d3 < other.d3; }
+
+   public Double3 abs() {
+      return new Double3(Math.abs(d1), Math.abs(d2), Math.abs(d3));
+   }
 }
