@@ -4,8 +4,12 @@ import primitives.*;
 import renderer.rayTracer.*;
 import scene.Scene;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static primitives.Util.isZero;
 
@@ -220,6 +224,7 @@ public class Camera implements Cloneable {
                         camera.rayTracerBase = new AdaptiveSuperSamplingRayTracer(scene);
                         ((AdvancedRayTracer) camera.rayTracerBase).enhancements = enhancements;
                     }
+                    case THREADS -> camera.parallel = true;
                     default -> throw new IllegalArgumentException("Unknown acceleration type: " + acceleration);
                 }
             }
@@ -330,6 +335,8 @@ public class Camera implements Cloneable {
      */
     int nY = 1;
 
+    boolean parallel = false;
+
     private Camera() {
     }
 
@@ -380,7 +387,10 @@ public class Camera implements Cloneable {
     public Camera renderImage() {
         for (int i = 0; i < nX; i++) {
             for (int j = 0; j < nY; j++) {
-                castRay(nX, nY, j, i);
+                if(parallel)
+                    Proccesses.run(nX, nY, this::castRay);
+                else
+                    castRay(nX, nY, j, i);
             }
         }
         return this;

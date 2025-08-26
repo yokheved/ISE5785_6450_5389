@@ -58,7 +58,7 @@ class AdvancedRayTracerTest {
     }
 
     @Test
-    void testAntialiasingAcceleration() throws CloneNotSupportedException {
+    void testAntialiasingAccelerationADAPTIVE() throws CloneNotSupportedException {
         //read a json file with scene data and build camera, and render to a photo
         Scene scene = new Scene("Test Scene");
         FileParser fileParser = new JsonParser("antialiasingTest.json");
@@ -74,5 +74,23 @@ class AdvancedRayTracerTest {
 
         cameraAcceleration.renderImage().writeToImage("antialiasingTest-adaptiveSuperSampling");
         //max rays 25 -> 3 min 39 sec, 1 min 11 sec, 30 sec 773 ms
+    }
+
+    @Test
+    void testAntialiasingAccelerationTHREADS() throws CloneNotSupportedException {
+        //read a json file with scene data and build camera, and render to a photo
+        Scene scene = new Scene("Test Scene");
+        FileParser fileParser = new JsonParser("antialiasingTest.json");
+        fileParser.getScene(scene);
+
+        Camera cameraAcceleration = cameraBuilder
+                .setRayTracer(scene,RayTracerType.ADVANCED)
+                .setAccelerations(scene, AccelerationType.THREADS)
+                .setEnhancements(new Antialiasing(scene).setRayConstructor(
+                        new JitteredTargetArea(25)
+                ))
+                .build();
+
+        cameraAcceleration.renderImage().writeToImage("antialiasingTest-threads");
     }
 }

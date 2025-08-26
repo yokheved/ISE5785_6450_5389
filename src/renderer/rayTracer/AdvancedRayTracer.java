@@ -58,7 +58,8 @@ public class AdvancedRayTracer extends RayTracerBase {
         double maxDepth = Math.sqrt(advanced.getMaxRaysPerBeam())-1;
         // Base case: if too few rays, return scaled color
         if (depth >= maxDepth) {
-            return advanced.calculateColor(ray).scale(1.0 / depth * depth);
+            Color subCellColor = advanced.calculateColor(ray);
+            return subCellColor.scale(1.0 / depth * depth);
         }
         List<Ray> rays = advanced.subCellSampleRaysFromInnerPoint(depth,ray.getHead());
         return superSamplingRecusiveCall(rays, advanced, depth, topLeftIndex, maxDepth);
