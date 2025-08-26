@@ -210,6 +210,12 @@ public class JsonParser extends FileParser {
                     geometry = new Cylinder(height, cylRay, cylRadius);
                     break;
 
+                case "geometries":
+                    geoObj = geoObj.getJSONObject("geometries");
+                    Geometries geometries1 = parseGeometries(geoObj);
+                    geometries.add(geometries1);
+                    return geometries;
+
                 default:
                     throw new IllegalArgumentException("Unknown geometry type: " + type);
             }
