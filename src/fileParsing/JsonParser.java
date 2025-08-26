@@ -211,7 +211,6 @@ public class JsonParser extends FileParser {
                     break;
 
                 case "geometries":
-                    geoObj = geoObj.getJSONObject("geometries");
                     Geometries geometries1 = parseGeometries(geoObj);
                     geometries.add(geometries1);
                     return geometries;

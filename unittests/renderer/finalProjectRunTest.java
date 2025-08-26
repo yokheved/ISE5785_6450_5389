@@ -36,7 +36,7 @@ public class finalProjectRunTest {
                 .setRayTracer(scene, RayTracerType.SIMPLE).build();
 
         // Render a simple scene with the zoomed camera
-        simpleTracerCamera.renderImage().writeToImage("finalImageSimple.png");
+        simpleTracerCamera.renderImage().writeToImage("finalImageSimple");
 
     }
 }
