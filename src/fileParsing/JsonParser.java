@@ -213,7 +213,7 @@ public class JsonParser extends FileParser {
                 case "geometries":
                     Geometries geometries1 = parseGeometries(geoObj);
                     geometries.add(geometries1);
-                    return geometries;
+                    continue;
 
                 default:
                     throw new IllegalArgumentException("Unknown geometry type: " + type);
