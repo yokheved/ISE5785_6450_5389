@@ -87,10 +87,10 @@ public class AdvancedRayTracerTest {
                 .setRayTracer(scene,RayTracerType.ADVANCED)
                 .setAccelerations(scene, AccelerationType.THREADS)
                 .setEnhancements(new Antialiasing(scene).setRayConstructor(
-                        new JitteredTargetArea(25)
+                        new JitteredTargetArea(81)
                 ))
                 .build();
 
         cameraAcceleration.renderImage().writeToImage("antialiasingTest-threads");
-    }
+    }//max rays 25 -> 58 sec
 }

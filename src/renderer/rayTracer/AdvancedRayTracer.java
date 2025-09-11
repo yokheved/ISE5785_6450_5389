@@ -43,15 +43,17 @@ public class AdvancedRayTracer extends RayTracerBase {
 
     @Override
     public Color traceRay(Ray ray) {
-        //if enhancements contains an object of class Antialiasing, use it to trace the ray
         for (AdvancedRayTracer enhancement : enhancements) {
-            if (enhancement instanceof Antialiasing antialiasing) {
-                antialiasing.targetAreaBase = antialiasing.copyTargetArea(ray);
-                return superSampling(ray, antialiasing, 1, 0);
+            if (enhancement instanceof Antialiasing aa) {
+                // NEW: per-ray local instance to avoid shared mutable state
+                Antialiasing local = new Antialiasing(scene);
+                local.targetAreaBase = aa.copyTargetArea(ray); // local cache per ray
+                return superSampling(ray, local, 1, 0);
             }
         }
         return super.traceRay(ray);
     }
+
 
     protected Color superSampling(Ray ray, AdvancedRayTracer advanced, int depth, int topLeftIndex) {
         // Calculate the color of the first ray

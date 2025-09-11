@@ -14,11 +14,12 @@ public final class Proccesses {
             Executors.newFixedThreadPool(MAX_WORKERS, new ThreadFactory() {
                 private final AtomicInteger count = new AtomicInteger(1);
                 @Override
+
                 public Thread newThread(Runnable r) {
                     Thread t = new Thread(r, "Proccess-" + count.getAndIncrement());
-                    t.setDaemon(true);
-                    return t;
+                    return t; // not daemon
                 }
+
             });
 
     /** Prevent instantiation */

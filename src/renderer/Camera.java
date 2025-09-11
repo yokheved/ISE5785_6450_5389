@@ -385,16 +385,18 @@ public class Camera implements Cloneable {
      * @return the camera instance (for method chaining)
      */
     public Camera renderImage() {
-        for (int i = 0; i < nX; i++) {
-            for (int j = 0; j < nY; j++) {
-                if(parallel)
-                    Proccesses.run(nX, nY, this::castRay);
-                else
+        if (parallel) {
+            Proccesses.run(nX, nY, this::castRay);
+        } else {
+            for (int i = 0; i < nX; i++) {
+                for (int j = 0; j < nY; j++) {
                     castRay(nX, nY, j, i);
+                }
             }
         }
         return this;
     }
+
 
     /**
      * Draws a grid on the rendered image with the specified interval and color.
